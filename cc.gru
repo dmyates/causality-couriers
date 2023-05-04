@@ -1,0 +1,546 @@
+# '#' means this line (or the rest of this line) is a comment
+# (if you want to output '#' during your game, use "&amp;num;")
+game Causality Couriers # Game title
+id JITLD53 # game ID (used to identify cookies; should be unique on your site)
+author David Yates
+version 0.0.1
+person 2 # 2nd person, i.e. "You are in..."
+examine on # if 'on', the verb 'examine' will be implemented by clicking nouns
+conversation on
+wait off
+status { $room.display } | { $room.year } # '|' divides left and right ends of status bar
+colour statusbar_background b9b7a7 # https://coolors.co/086375-5f8789-8a9993-b5aa9d-b7b1a2-b9b7a7-000000-0c1821-222d35
+colour statusbar_text 000000
+colour main_background b5aa9d          
+colour main_text 000000                
+colour main_prompt 000000              
+colour main_text_old 22d35            
+colour main_prompt_old 22d35          
+colour instructions_button 5F8789    
+colour instructions_button_text 000000 
+colour room_background b9b7a7           
+colour room_text 000000                 
+colour room_button 5F8789                
+colour room_button_text 000000         
+colour conversation_background b7b1a2  
+colour conversation_text 000000
+colour conversation_button 5F8789
+colour conversation_button_text 000000
+colour examine_button 5F8789
+colour examine_button_text 000000
+colour inventory_background b5aa9d
+colour inventory_text 000000
+colour inventory_button 5F8789
+colour inventory_button_text 000000
+colour inventory_inactive_text 22d35
+colour save_background 0c1821
+colour save_button 5F8789
+colour save_button_text 000000
+colour page_background 0c1821
+localise intro_for_instructions_click &amp;nbsp;
+localise intro_instructions_button how to play
+localise instructions This is a text adventure game built in Robin Johnson's Gruescript. The main action takes place in this pane. In the panes below, you can see where you are, what's there, and what you're carrying. To move somewhere or interact with something, click one of the buttons. You can click on the names of objects to take a closer look at them. Finally, you can click an item in the carrying list to hold that item, which may make more actions available. Good luck!
+localise intro_by by
+localise you_see_nothing_special_about_that {The $this} is just an ordinary, everyday {$this}. It looks, sounds and smells exactly as you would expect it to.
+localise you_can_also_see What's here:
+#localise youre_holding Holding:
+#localise youre_carrying Carrying:
+# Introductory text
+say You're standing in front of barricade built of jornk, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
+say
+say Corrugated iron sheets, bits of stone and broken brick, twisted remains of cars and lawnmowers tower above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
+say 
+say You double-check your collection tag. Yep, this must be the place. But how to get in?
+say
+js hold('collection_tag') # hold tag at start of game
+
+## PART ONE: COLLECTION
+thing sword Courier's Blade
+desc This is the first job you've had where a massive sword is considered required equipment. Carrying it around on your safer deliveries sometimes makes you feel a bit silly, but it's saved your life { $this.savedlife }. It is, of course, no ordinary sword. The blade is sharp enough to slice through metal as though cutting cheese. Despite its large size, it's very light and easy to wield. 
+prop savedlife a couple of times now # this should change after you destroy the drone
+carried
+tags portable
+
+verb drop sword
+say This sword has saved your life enough times to earn a permanent spot on your back.
+
+thing collection_tag collection tag
+desc &amp;nbsp;
+tags portable
+carried
+cverbs twist
+
+verb examine collection_tag # hack to have a multiline description
+say A small green plastic tag, rectangular in shape, with no obvious special properties. On one side, a translucent sheet overlays a slip of white paper, printed with collection instructions. These read as follows&amp;colon;
+say
+say <center>Waybill&amp;colon; CC00554273</center>
+say <center>Dimensions&amp;colon; 30x8 cm</center>
+say <center>Weight&amp;colon; 1.2 kg</center>
+say <center>Collection address&amp;colon;</center>
+say <center>Darius Fletcher, Giant Barricade, Outer Wastes, Undisclosed</center>
+say
+say Because collection tags function as teleporters, addresses don't need to be too specific.
+
+verb twist collection_tag
+say Twisting a collection tag will instantly transport the holder to the place and time of the parcel's collection. But only once, and you've already used this one.
+
+## In front of the barricade
+room before_barricade You're standing in front of an enormous barricade made of junk. { before_barricade.goin }
+prop display Before the junk barricade
+prop year Unknown year
+prop teleport_sentence The junk barricade and the desert blend blend into a colourful blur as you spin through time and space.
+prop goin There is no obvious entrance.
+dir desert before_barricade
+tags start
+
+verb go desert
+at before_barricade
+say It doesn't look like there's anything else for miles around. Besides, if you wander too far off course, you'll be teleported back home, and you'll get a warning for an incomplete job.
+
+thing barricade
+name barricade
+desc It looks like it's been here for a long time, slowly, almost organically growing. There's at least half a junkyard's worth of discarded machinary and twisted metal, mixed with half a quarry's worth of different sized rocks.
+loc before_barricade
+tags immovable impenetrable
+
+setverb knock_on barricade
+!has barricade knocked
+
+verb knock_on barricade
+tag $this knocked
+say Feeling like an idiot, you approach the barricade and rap your knuckles against the smooth green-painted surface of the least-rusted fender you can locate. "Hello, anyone in there?" you ask.
+say
+say There is no response, as you excepted.
+say
+say You look around at the nothing that stretches in every direction. Until you get this parcel, you're stuck here. You knock again, repeatedly and with greater force.
+say
+say This time, a mechanical buzz greets you. It's coming from somewhere above your head. You look up, but have to shield your eyes from the harsh sun. You can just make out a descending circular shadow.
+bring drone
+
+thing drone circular shadow
+name circular shadow
+desc It's a flying mechanical helicopter drone.
+prop callme drone
+tags alive hostile
+verbs wave_at
+
+verb examine drone
+run x_drone
+
+proc x_drone
+!has $this examined
+run introduce drone
+tag $this examined
+say On closer inspection, it appears to be a flying mechanical helicopter drone.
+
+verb wave_at drone
+run x_drone
+!has $this waved: It knows you're here already!
+tag $this waved
+say You wave at the drone. There's loud clicking sound, audible over the whir of its rotors, and bright red beam shines directly in your eyes. You cry out and look away. The drone clicks again, and its rotors get louder. It's coming straight for you!
+js document.getElementById("illustration-img").src="./drone.png"
+
+var dodge_count 0
+
+setverb dodge drone
+has $this waved
+log $dodge_count
+
+verb dodge drone
+add dodge_count 1
+random dodge_text 5
+!lt $dodge_count 10: { dodge_variants.$dodge_text } # first five dodges are successful
+!eq $dodge_count 11: { dodge_variants_tiring.$dodge_text } # still successful, but tiring
+chance 1 2: { dodge_variants_tiring.$dodge_text } # still successful, but tiring
+say You try to duck out of the drone's way, but it swoops down to meet you. Before you can move again, it's upon you. You scream in agony as the blades slice your face open.
+say
+say Next time, consider doing something other than endlessly dodging the homicidal drone.
+say
+die GAME OVER
+
+thing dodge_variants
+prop 1 You dive out of the drone's path just as it lunges for you. Its rotor blades miss your ear by inches. Undeterred, the drone turns around and fixes its red light on you in preparation for another strike.
+prop 2 You sidestep the drone's attack, narrowly avoiding its whirring blades. But it quickly turns around, ready to make another attempt. Its menacing red light glares at you.
+prop 3 As the drone swoops towards you, you duck out of the way just in time, feeling the rush of wind from its blades. Undaunted, the drone pivots around, its unblinking red eye tracking your every move.
+prop 4 With a quick step to the left, you manage to evade the drone's attack, feeling the rush of air as it whizzes past you. But the drone is relentless, and it hovers menacingly in front of you, its red light fixated on your position.
+prop 5 With a quick step to the right, you manage to evade the drone's attack, feeling the rush of air as it whizzes past you. But the drone is relentless, and it hovers menacingly in front of you, its red light fixated on your position.
+
+thing dodge_variants_tiring
+prop 1 You dive out of the drone's path just as it lunges for you. Its rotor blades miss your ear by less than an inch. Undeterred, the drone turns around and fixes its red light on you in preparation for another strike. Blood pounds against your ears.
+prop 2 You sidestep the drone's attack, but its whirring blades nick the sleeve of your uniform. It quickly turns around, ready to make another attempt. Its menacing red light glares at you.
+prop 3 As the drone swoops towards you, you duck out of the way just in time, feeling the rush of wind from its blades. Undaunted, the drone pivots around, its unblinking red eye tracking your every move. Your breathing is heavy, and you're not sure how much longer you can keep this up.
+prop 4 With a step to the left, you manage to evade the drone's attack. The rush of air as it whizzes past nearly knocks you off balance. The drone is relentless, and it hovers menacingly in front of you, its red light fixated on your position.
+prop 5 With a lurch to the right, you manage to evade the drone's attack, feeling the rush of air as it whizzes past you. That was too close. But the drone is relentless, and it hovers menacingly in front of you, its red light fixated on your position.
+
+setverb strike drone
+carried sword
+gt $dodge_count 0
+
+verb strike drone
+run draw_sword
+say Eyes fixed on the drone's beady red light, you lower yourself into a fighting stance, gripping the hilt of your sword firmly with both hands. The drone clicks and comes for you, but you're ready.
+say
+say With a mighty swing, you bring the massive blade down, just as the drone comes within striking distance. There's a horrible grinding sound, and the motion of the drone's rotors sends vibrations down your arms. But you hold fast. Metal slides against metal as you force the sword down.
+say
+say Two halves of the drone drop at your feet, smoking. The red light has gone out for good.
+hide drone
+bring destroyed_drone
+write sword.savedlife three times now
+js document.getElementById("illustration-img").src="./barricade.png"
+
+thing destroyed_drone
+desc It's been sliced clean in two. From either side, tendrils of black smoke curl up into the sky.
+
+var turns_since_drone_destroyed 0
+
+rule # wait after drone destruction
+here destroyed_drone
+add turns_since_drone_destroyed 1
+
+rule # notice drone destruction
+eq before_barricade.dir.opening 0
+eq $turns_since_drone_destroyed 2
+write before_barricade.goin A dark opening has appeared near the middle.
+say
+say You're busy contemplating the remains of the thing that tried to kill you when you notice movement on the barricade. Two pieces of corrugated iron are being pulled apart, accompanied by the sound of squeaky pulleys and loud metallic scraping, to reveal a dark opening.
+open before_barricade opening wooden_shed
+
+verb go opening
+at before_barricade
+js document.getElementById("illustration-img").src="./shed.png"
+!has wooden_shed visited
+say One hand on the hilt of your sword, you step cautiously into the opening. As your foot crosses the threshold, an electric light blinks on. It's dim and inconstant, but provides enough light for you to see you're in a tight hallway. The ceiling is quite low, forcing you to stoop, and the walls so close that you have no room to draw your sword.
+say
+say "Come in, come in!" says a voice from the end of the hall, which appears to open out into a larger room. "Sorry about the drone! Thought you were someone else."
+say
+say For the sake of the job, you proceed through the hallway.
+say
+tag wooden_shed visited
+goto wooden_shed
+
+
+## Wooden shed
+room wooden_shed You find yourself in a dimly lit wooden shed. The walls are lined with photographs, newspaper clippings and drawing pins attached by strings. { wooden_shed.fletcher }
+prop display Wooden shed
+prop year Unknown year
+prop fletcher A shifty character stands in front of a desk, regarding you curiously. # TODO change this upon introduction
+prop teleport_sentence The conspiracy-laden walls of Fletcher's small room blend into a gray blur as you spin through time and space.
+dir outside before_barricade
+#tags start # for testing REMOVE
+
+verb go outside
+at wooden_shed
+js document.getElementById("illustration-img").src="./barricade.png"
+continue
+
+thing walls
+desc The wood surface of the wall is barely visible beneath the hundres of photographs, newspaper clippings, printed emails and memoranda covering it. Many are complete with captions scrawled in red ink, and all are connected with different coloured strings. All the standard conspiracy theories are covered -- you can see stuff about the moon landing, JFK, flat earth, hollow earth, chemtrails, ancient aliens, lizard people, Freemasons, the Knights Templar, the Bilderburg Group, Nessie and Bigfoot. There's a bold circle around a photograph of the Great Pyramid of Giza.
+loc wooden_shed
+
+verb examine walls
+tag $this examined
+continue
+
+thing fletcher shifty character
+name shifty character
+desc TODO this
+tags alive male conversation
+loc wooden_shed
+prop callme Fletcher
+prop start_conversation "You must be the courier," says the man, looking you up and down. "Name's Fletcher."
+prop end_conversation "G'bye then."
+
+verb talk fletcher
+js document.getElementById("illustration-img").src="./fletcher.png"
+run introduce $this
+write wooden_shed.fletcher A shifty character named Fletcher stands in front of a desk, regarding you curiously.
+continue
+
+verb end_conversation fletcher # change intro line following introduction
+js document.getElementById("illustration-img").src="./shed.png"
+write $this.start_conversation "Yeah?" asks Fletcher, shifting the toothpick in his mouth.
+continue
+
+setverb ask_fletcher drone
+!has fletcher asked_about_drone
+
+verb ask_fletcher drone
+tag fletcher asked_about_drone
+say "Yeah, sorry again," Fletcher says, not looking all that sorry. "Our security system can be a little overzealous. But honestly, if you were able to take it out that easily, we probably need to upgrade anyway. I told Stice we needed the ones with AKs!"
+
+setverb ask_fletcher barricade
+!has fletcher asked_about_barricade
+
+verb ask_fletcher barricade
+tag fletcher asked_about_barricade
+say Fletcher raises an eyebrow. "Best fortifications this side of the Crater! But I guess you're not from around here. Obviously. They murdered the last Causality Couriers in '47."
+say 
+say Fletcher chews his toothpick for a moment. "When did you say you're from?" You tell him. "Back then, eh? Well, maybe take an early retirement, would be my advice."
+
+setverb ask_fletcher walls
+has walls examined
+!has fletcher asked_about_walls
+
+verb ask_fletcher walls
+tag fletcher asked_about_walls
+say "Oh, that?" Fletcher glances around at the dense array of photographs and newspaper clippings and pantomimes laughter. "Just a little hobby of mine. Passes the time."
+
+setverb ask_fletcher parcel
+!has fletcher asked_about_parcel
+
+verb ask_fletcher parcel # think there's a bug here "There is no reply"
+carried collection_tag: Fletcher asks to see the collection tag. You pat your pockets frantically but can't find it. You apologise and ask him to wait one moment. He frowns.
+say You show Fletcher the collection tag. He squints at it for a moment, and then nods. "I've got the parcel right here," he says, walking around to the other side of the desk. He fumbles around with the drawers for a moment, and finally pulls out a tall, thin box wrapped in brown paper. A green delivery tag hangs off one side.
+say
+say You take the box from him and hand him the collection tag as a receipt.
+give tall_parcel
+hide collection_tag
+tag fletcher asked_about_parcel
+
+### Parcel
+thing tall_parcel tall parcel
+name tall parcel
+desc A tall, thin rectangular parcel marked FRAGILE.
+tags portable parcel dtagged
+prop shake_count 0
+prop triedopening 0
+
+setverb open tall_parcel
+!has $this open
+
+setverb shake tall_parcel
+!has $this open
+
+verb shake tall_parcel
+add shake_count 1
+say You hear a sloshing sound through the wrapping.
+
+verb open tall_parcel
+!here fletcher: You really shouldn't tamper with parcels entrusted to your care. Especially not right in front of a customer.
+!here alien: You really shouldn't tamper with parcels entrusted to your care. Especially not right in front of a customer.
+add $this.triedopening 1
+gt $this.triedopening 1: As a Causality Courier, you really shouldn't tamper with parcels entrusted to you.
+gt $this.triedopening 2: As curious as you are about the contents of this package, you really shouldn't open it...
+gt $this.triedopening 3: The temptation is too great, you're not sure how much longer you can stop yourself from opening this package...
+gt $this.triedopening 4: Are you really sure you want to do this?
+tag $this open
+tag $this tampered
+give wine_bottle
+write $this.desc A tall, thin rectangular parcel marked FRAGILE. It's been illegally opened.
+say Against your better judgement, you open the parcel. There's a wine bottle inside.
+
+setverb close tall_parcel
+has $this open
+
+verb close tall_parcel
+carried wine_bottle: There's no point in closing it if it's empty. Make sure you're carrying something to put inside &ndash; preferably the original contents.
+hide wine_bottle
+untag $this open
+write $this.desc A tall, thin rectangular parcel marked FRAGILE. You know what you did.
+say You put the wine bottle back in the parcel and close it back up.
+
+setverb remove_tag tall_parcel
+held $this
+has $this dtagged
+
+verb remove_tag tall_parcel
+say You pull the tag off the tall parcel. Its waybill number, CC00554273, matches the one on your collection tag.
+untag $this dtagged
+unhold
+give delivery_tag
+js hold('delivery_tag')
+
+thing delivery_tag delivery tag
+desc &amp;nbsp;
+tags portable
+cverbs twist
+
+verb examine delivery_tag # hack to have a multiline description
+say A small green plastic tag, rectangular in shape, with no obvious special properties. On one side, a translucent sheet overlays a slip of white paper, printed with delivery instructions. These read as follows&amp;colon;
+say
+say <center>Waybill&amp;colon; CC00554273</center>
+say <center>Dimensions&amp;colon; 30x8 cm</center>
+say <center>Weight&amp;colon; 1.2 kg</center>
+say <center>Delivery address&amp;colon;</center>
+say <center>Gthxrynn of the Ythrgzlyrs
+say <center>Pyramid Construction Site, Giza, Kingdom of Egypt, 2500 BC</center>
+!has $this examined
+tag $this examined
+say
+say You've seen some strange tags in this business, but this one takes the cake.
+
+setverb ask_fletcher delivery
+has delivery_tag examined
+
+verb ask_fletcher delivery
+say You ask Fletcher if the delivery tag is for real.
+say
+say He looks offended. "Twist it and see, pal."
+
+verb twist delivery_tag
+assign conversation 0
+!has $this twisted: Twisting a delivery tag will instantly transport the holder to the place and time where the parcel is to be delivered. But only once, and you've already used this one.
+!at egypt # shouldn't come up in normal gameplay
+tag $this twisted
+say Grasping the tag firmly in both hands, you give it a hard twist. {$room.teleport_sentence}
+say
+say TODO intro for egypt
+js document.getElementById("illustration-img").src="./pyramid.png"
+goto egypt
+
+# Parcel contents
+thing wine_bottle wine bottle
+tags portable poisoned sealed
+desc A smooth glass bottle containing red wine. The colour is deep and rich. There is no label or other indication of what kind of wine it is. The bottle { $openstatus }.
+prop triedopening 0
+prop trieddrinking 0
+prop triedpouring 0
+prop openstatus is unopened
+
+verb drop wine_bottle
+!has wine_bottle empty
+say Dropping this bottle would cause it to shatter, sending wine and shards of glass everywhere. Let's save the clean-up and not do that.
+
+verb drop wine_bottle
+has wine_bottle empty
+say Dropping this bottle would cause it to shatter, sending shards of glass everywhere. Let's save the clean-up and not do that.
+
+setverb open wine_bottle
+carried $this
+has $this sealed
+
+verb open wine_bottle
+!here fletcher: It's probably not a good idea to show Fletcher you've been tampering with his parcel.
+!here alien: You can't flash that around in front of its intended recipient!
+add $this.triedopening 1
+gt $this.triedopening 1: You shouldn't open the wine bottle, but then, you shouldn't have opened the parcel either. There's still time to turn back.
+gt $this.triedopening 2: You really want to open this, eh?
+untag $this sealed
+write $this.openstatus has been opened
+say You open the bottle and take a whiff. It smells like the perfect crime.
+
+setverb drink wine_bottle
+carried $this
+!has $this sealed
+!has $this empty
+
+verb drink wine_bottle
+!here fletcher: Fletcher probably wouldn't appreciate watching you take a swig of his wine.
+!here alien: At least have enough discretion not to drink the wine in front of its intended recipient!
+add $this.trieddrinking 1
+gt $this.trieddrinking 1: Well, you've opened it now, but that doesn't mean you have to drink it. Though you are feeling quite thirsty...
+has $this poisoned
+say You lift the bottle to your lips and take a swig, without even waiting for the tannins to settle. The wine has a full-bodied flavour, and you note hints of vanilla and– and– a terrible, overpowering bitterness!
+say
+say You clutch at your stomach and double over, overcome with dizziness. The inside of your mouth is on fire, burning like you've never felt before. The feeling spreads from your mouth, down your throat, and into your chest.
+say
+say The last thing you hear is shattering glass, as the wine bottle drops from your hand.
+say
+die GAME OVER
+
+setverb empty wine_bottle
+carried $this
+!has $this sealed
+
+verb empty wine_bottle
+!here fletcher: Fletcher probably wouldn't appreciate watching you pour out his wine.
+!here alien: You can't just empty the bottle in front of its intended recipient.
+add $this.triedemptying 1
+gt $this.triedemptying 1: It would be a bit of a waste to empty it, not to mention the vandalism. But if you really want to do it, you can...
+tag $this empty
+untag $this poisoned
+write $this.desc A smooth, unlabelled glass bottle that once contained red wine.
+say You tip the bottle over and watch the rich red liquid pours out onto the sand, first a torrent, then a trickle. Finally, you shake the bottle to wring out the last few drops. At your feet, a damp patch spreads. It smells faintly of almonds.
+
+## PART TWO: DELIVERY
+
+# Egypt
+room egypt You're standing in front of a large work site that will one day be the Great Pyramid of Giza.
+prop display Great Pyramid Construction Site, Giza
+prop year ~2500 BC
+dir desert egypt_desert
+
+verb go desert
+at egypt
+carried tall_parcel # TODO: this block can be bypassed by dropping the parcel
+say You've got to deliver this parcel before you can go wandering off.
+
+thing alien Tall Alien
+name Tall Alien
+desc A tall alien # TODO this
+loc egypt
+tags alive male conversation
+prop callme Gthxrynn
+prop start_conversation "Hello, my name is Gthxrynn," says the alien.
+prop end_conversation "Farewell, courier. May your travels be safe and prosperous."
+
+verb talk alien
+run introduce $this
+js document.getElementById("illustration-img").src="./alien.png"
+continue
+
+verb end_conversation alien # change intro line
+assign $this.start_conversation "Hello again, courier," says Gthxrynn.
+js document.getElementById("illustration-img").src="./pyramid.png"
+continue
+
+setverb ask_alien pyramid
+!has alien asked_about_pyramid
+
+verb ask_alien pyramid
+tag alien asked_about_pyramid
+say "I have come from very far away to watch the construction of this famous pyramid and learn what I may from its builders. We Ythrgzlyrs are masters of time and space, but we've never quite been able to figure out architecture, you know."
+
+setverb ask_alien learnings
+has alien asked_about_pyramid
+
+verb ask_alien learnings
+say "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offense."
+
+setverb ask_alien name
+!has alien asked_about_name
+
+verb ask_alien name
+tag alien asked_about_name
+say "It's pronounced Gthxrynn. Gthxrzzkynn without the zzk, if that helps."
+
+setverb tell_alien delivery
+try has_any_parcel
+!has alien told_about_delivery
+
+verb tell_alien delivery
+tag alien told_about_delivery
+say "Ah, you have my delivery, excellent!"
+
+setverb deliver_to_alien tall_parcel
+carried tall_parcel
+here alien
+has alien told_about_delivery
+
+verb deliver_to_alien tall_parcel
+carried delivery_tag: You'll need the delivery tag as well.
+!has $this open: You can't just deliver an opened parcel! At least try to make it look presentable first...
+assign conversation 0
+hide $this
+hide delivery_tag
+say You hand {the $this} over to { alien.name }, along with its delivery tag.
+say TODO more
+
+# General procedures
+proc has_any_parcel # succeeds if any item with the parcel tag is carried
+count inventory_weight carried
+!eq $inventory_weight 0
+sequence carried # fails open if nothing carried, so line above needed
+log $this
+has $this parcel
+
+proc introduce individual # make intro & change descriptions to person's name
+assign $individual.display $individual.callme
+assign $individual.name $individual.callme
+continue
+
+proc draw_sword
+!held sword
+say You reach back and draw the Courier's Blade from its holster.
+js hold('sword') # dirty hack because there's no way to force holding
+
