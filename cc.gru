@@ -71,6 +71,7 @@ carried
 cverbs twist
 
 verb examine collection_tag # hack to have a multiline description
+tag $this examined
 say A small green plastic tag, rectangular in shape, with no obvious special properties. On one side, a translucent sheet overlays a slip of white paper, printed with collection instructions. These read as follows&amp;colon;
 say
 say <center>Waybill&amp;colon; CC00554273</center>
@@ -144,7 +145,6 @@ var dodge_count 0
 
 setverb dodge drone
 has $this waved
-log $dodge_count
 
 verb dodge drone
 add dodge_count 1
@@ -223,10 +223,10 @@ goto wooden_shed
 room wooden_shed You find yourself in a dimly lit wooden shed. The walls are lined with photographs, newspaper clippings and drawing pins attached by strings. { wooden_shed.fletcher }
 prop display Wooden shed
 prop year Unknown year
-prop fletcher A shifty character stands in front of a desk, regarding you curiously. # TODO change this upon introduction
+prop fletcher A shifty character stands in front of a desk, regarding you curiously.
 prop teleport_sentence The conspiracy-laden walls of Fletcher's small room blend into a gray blur as you spin through time and space.
 dir outside before_barricade
-#tags start # for testing REMOVE
+#tags start # for testing
 
 verb go outside
 at wooden_shed
@@ -243,16 +243,18 @@ continue
 
 thing fletcher shifty character
 name shifty character
-desc TODO this
+desc { $this.subject} looks to be in his sixties, with a white beard and a mane of grey hair. He's dressed in filthy jeans and a shirt the same colour as the blasted ground outside. His small green eyes fix on you from their sunken sockets, below brows creased with concern. It has been years since he last smiled.
 tags alive male conversation
 loc wooden_shed
 prop callme Fletcher
-prop start_conversation "You must be the courier," says the man, looking you up and down. "Name's Fletcher."
+prop subject The man
+prop start_conversation "You must be the courier," says the man, looking you up and down. "Name's Fletcher." Your collection tag mentions a Darius Fletcher – this must be him.
 prop end_conversation "G'bye then."
 
 verb talk fletcher
 js document.getElementById("illustration-img").src="./fletcher.png"
 run introduce $this
+assign $this.subject $this.callme
 write wooden_shed.fletcher A shifty character named Fletcher stands in front of a desk, regarding you curiously.
 continue
 
@@ -288,9 +290,9 @@ say "Oh, that?" Fletcher glances around at the dense array of photographs and ne
 setverb ask_fletcher parcel
 !has fletcher asked_about_parcel
 
-verb ask_fletcher parcel # think there's a bug here "There is no reply"
+verb ask_fletcher parcel
 carried collection_tag: Fletcher asks to see the collection tag. You pat your pockets frantically but can't find it. You apologise and ask him to wait one moment. He frowns.
-say You show Fletcher the collection tag. He squints at it for a moment, and then nods. "I've got the parcel right here," he says, walking around to the other side of the desk. He fumbles around with the drawers for a moment, and finally pulls out a tall, thin box wrapped in brown paper. A green delivery tag hangs off one side.
+say You show Fletcher your collection tag. He squints at it for a moment, and then nods. "I've got the parcel right here," he says, walking around to the other side of the desk. He fumbles around with the drawers for a moment, and finally pulls out a tall, thin box wrapped in brown paper. A green delivery tag hangs off one side.
 say
 say You take the box from him and hand him the collection tag as a receipt.
 give tall_parcel
@@ -304,6 +306,7 @@ desc A tall, thin rectangular parcel marked FRAGILE.
 tags portable parcel dtagged
 prop shake_count 0
 prop triedopening 0
+prop tamperworry &nbsp;
 
 setverb open tall_parcel
 !has $this open
@@ -325,6 +328,7 @@ gt $this.triedopening 3: The temptation is too great, you're not sure how much l
 gt $this.triedopening 4: Are you really sure you want to do this?
 tag $this open
 tag $this tampered
+write $this.tamperworry You hope the alien won't notice that you've tampered with it.
 give wine_bottle
 write $this.desc A tall, thin rectangular parcel marked FRAGILE. It's been illegally opened.
 say Against your better judgement, you open the parcel. There's a wine bottle inside.
@@ -351,7 +355,7 @@ give delivery_tag
 js hold('delivery_tag')
 
 thing delivery_tag delivery tag
-desc &amp;nbsp;
+desc &nbsp;
 tags portable
 cverbs twist
 
@@ -364,6 +368,8 @@ say <center>Weight&amp;colon; 1.2 kg</center>
 say <center>Delivery address&amp;colon;</center>
 say <center>Gthxrynn of the Ythrgzlyrs
 say <center>Pyramid Construction Site, Giza, Kingdom of Egypt, 2500 BC</center>
+say
+say Below the English instructions, a series of pictograms depict half a pyramid, and a stick figure offering a tall, thin box up to a many-pointed black star.
 !has $this examined
 tag $this examined
 say
@@ -384,7 +390,10 @@ assign conversation 0
 tag $this twisted
 say Grasping the tag firmly in both hands, you give it a hard twist. {$room.teleport_sentence}
 say
-say TODO intro for egypt
+say Once the spinning blur in front of your eyes has turned predominantly yellow, it slows down and resolves itself into distinct objects. Clear blue sky, bright burning sun, rolling yellow sands. The sounds of yelling – an unfamiliar language – and of stone scraping against stone. The smell of all-pervading dust, and the feeling of dry heat.
+say 
+say You've travelled to another desert, one from long ago. Right in time to watch the construction of a monument that will last into your own time – the Great Pyramid of Giza, King Khufu's final resting place. But it's what you see when you turn around that really shocks you.
+say
 js document.getElementById("illustration-img").src="./pyramid.png"
 goto egypt
 
@@ -443,7 +452,7 @@ carried $this
 !has $this sealed
 
 verb empty wine_bottle
-!here fletcher: Fletcher probably wouldn't appreciate watching you pour out his wine.
+!here fletcher: Fletcher probably wouldn't appreciate you pouring out his wine right in front of him.
 !here alien: You can't just empty the bottle in front of its intended recipient.
 add $this.triedemptying 1
 gt $this.triedemptying 1: It would be a bit of a waste to empty it, not to mention the vandalism. But if you really want to do it, you can...
@@ -455,14 +464,16 @@ say You tip the bottle over and watch the rich red liquid pours out onto the san
 ## PART TWO: DELIVERY
 
 # Egypt
-room egypt You're standing in front of a large work site that will one day be the Great Pyramid of Giza.
+room egypt You're standing in front of a large work site that will one day be the Great Pyramid of Giza. { egypt.aliendesc }
 prop display Great Pyramid Construction Site, Giza
+prop aliendesc There appears to be an alien here, watching the construction.
 prop year ~2500 BC
 dir desert egypt_desert
+tags start # for testing
 
 verb go desert
 at egypt
-carried tall_parcel # TODO: this block can be bypassed by dropping the parcel
+here alien
 say You've got to deliver this parcel before you can go wandering off.
 
 thing alien Tall Alien
@@ -471,18 +482,26 @@ desc A tall alien # TODO this
 loc egypt
 tags alive male conversation
 prop callme Gthxrynn
-prop start_conversation "Hello, my name is Gthxrynn," says the alien.
+prop start_conversation You greet the alien in 21st century English. "Hello, my name is Gthxrynn," the alien replies. "I'm not from around here. It doesn't look like you are either." Its voice is slightly tinny, as if produced by a speaker, but it's entirely fluent, with a warm, familiar tone that contrasts greatly against its frightening appearance.
 prop end_conversation "Farewell, courier. May your travels be safe and prosperous."
 
 verb talk alien
 run introduce $this
+write egypt.aliendesc Gthxrynn of the Ythrgzlyrs stands on a small dune, watching the construction.
 js document.getElementById("illustration-img").src="./alien.png"
 continue
 
 verb end_conversation alien # change intro line
-assign $this.start_conversation "Hello again, courier," says Gthxrynn.
+write $this.start_conversation "Hello again, courier," says Gthxrynn.
 js document.getElementById("illustration-img").src="./pyramid.png"
 continue
+
+setverb ask_alien language
+!has alien asked_about_language
+
+verb ask_alien language
+tag alien asked_about_language
+say "You ask how I can understand you? Oh, human languages are all pretty similar, past and future. Certainly nothing the translator implanted in my... brain, I suppose you'd call it... can't handle." The alien waggles a few of its tentacles. "We Ythrgzlyrs pride ourselves on linguistics, you know."
 
 setverb ask_alien pyramid
 !has alien asked_about_pyramid
@@ -495,7 +514,8 @@ setverb ask_alien learnings
 has alien asked_about_pyramid
 
 verb ask_alien learnings
-say "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offense."
+say "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offence."
+# TODO variations
 
 setverb ask_alien name
 !has alien asked_about_name
@@ -505,12 +525,19 @@ tag alien asked_about_name
 say "It's pronounced Gthxrynn. Gthxrzzkynn without the zzk, if that helps."
 
 setverb tell_alien delivery
-try has_any_parcel
+#try has_any_parcel
+carried tall_parcel
+carried delivery_tag
 !has alien told_about_delivery
 
 verb tell_alien delivery
 tag alien told_about_delivery
-say "Ah, you have my delivery, excellent!"
+say "A delivery? For me? Are you sure?"
+say
+say You show {alien.name} the delivery tag, holding it up to where you think its eye-equivalents might be.
+say
+say After a moment, the alien speaks again. "Well, so it is. What a nice surprise!"
+js hold('tall_parcel')
 
 setverb deliver_to_alien tall_parcel
 carried tall_parcel
@@ -523,15 +550,123 @@ carried delivery_tag: You'll need the delivery tag as well.
 assign conversation 0
 hide $this
 hide delivery_tag
-say You hand {the $this} over to { alien.name }, along with its delivery tag.
-say TODO more
+say You hold {the $this} out to { alien.name }, along with its delivery tag. { $this.tamperworry }
+say
+run alien_drink
+
+# If the bottle is empty
+proc alien_drink
+has wine_bottle empty
+say The wine is empty.
+
+# If the bottle is full
+proc alien_drink
+!has wine_bottle empty
+has wine_bottle poisoned
+say { alien.name } thanks you graciously as it wraps a tentacle around the tall parcel. There's a quick swish, and suddenly the parcel is open, and another of the alien's tentacles is holding an unmarked bottle of red wine. It is open, somehow.
+say
+say "Marvellous! My favourite vintage."
+say
+say {alien.name } tips the top of the bottle towards the hole you take to be its mouth-equivalent. There's a sharp sucking sound, and the bottle is drained instantly.
+say
+say Then the alien explodes.
+hide alien
+write egypt.aliendesc Bits of smoking alien flesh lie scattered across the sand.
+bring alien_remains
+
+thing alien_remains alien remains
+name alien remains
+desc Two explosions in one day. You're surrounded (and covered!) by leathery bits of {alien.name}. Maybe wine doesn't agree with Ythrgzlyrs.
+
+var turns_since_alien_died 0
+
+rule # wait after alien death
+here alien_remains
+add turns_since_alien_died 1
+
+rule # notice alien death
+!has alien_remains reinforced
+eq $turns_since_alien_died 2
+tag alien_remains reinforced
+say
+say There's a sudden popping sound to the east. And the west. And the north. And every other direction, all at once. Everywhere you look, swirling black mists are appearing, with creatures that looks a lot like Gthxrynn emerging from them.
+say
+say And even though you're still not sure where their eyes are, you get the distinct impression that they're all bearing down on you. It's fight or flight.
+bring alien_swarm
+
+thing alien_swarm alien swarm
+name alien swarm
+desc An army of nightmarish black tentacle aliens surrounds you, with more appearing every moment. 
+
+# try to fight aliens
+setverb sword fight_aliens
+here alien_remains
+has alien_remains reinforced
+
+setverb alien_swarm strike
+here alien_remains
+has alien_remains reinforced
+
+verb sword fight_aliens
+run alien_attack
+
+verb alien_swarm strike
+run alien_attack
+
+proc alien_attack
+say TODO this
+die GAME OVER
+
+# wait too long and die through inaction
+rule
+has alien_remains reinforced
+eq $turns_since_alien_died 5
+say TODO this
+die GAME OVER
+
+# Escape aliens
+verb go desert
+at egypt
+here alien_remains
+!has alien_remains reinforced
+say You're still in shock. 
+
+verb go desert
+at egypt
+here alien_remains
+has alien_remains reinforced
+here alien_swarm
+say You're not going to wait around to see what these aliens want. You look around and spy a gap between two portals that have just materialised. As long as you can get far enough away, your Casuality Courier homeward teleportation will kick in, and you'll be able to put a few millenia between yourself and the Ythrgzlyrs.
+say
+say Head down, you sprint for the gap. Surprised yelps crackle from the speakers of the Ythrgzlyrs' translation devices, but most are still busy climbing out of their portals. Before long, you feel a familiar tingling sensation and the world starts to spin.
+run teleport_prison
+
+# PART THREE: CONCLUSION
+var ending 0
+
+room apartment You're in your familiar apartment, a welcome sight after any jaunt through time and space.
+prop display Your apartment
+prop year Present day
+
+## Prison ending
+proc teleport_prison
+assign ending 1
+goto apartment
+
+room prison You're in a prison cell.
+prop display Your cell
+prop year Present day
+
+## Lecture ending
+proc teleport_home
+assign ending 1
+goto apartment
 
 # General procedures
 proc has_any_parcel # succeeds if any item with the parcel tag is carried
 count inventory_weight carried
 !eq $inventory_weight 0
 sequence carried # fails open if nothing carried, so line above needed
-log $this
 has $this parcel
 
 proc introduce individual # make intro & change descriptions to person's name
@@ -541,6 +676,6 @@ continue
 
 proc draw_sword
 !held sword
-say You reach back and draw the Courier's Blade from its holster.
+say You reach back and draw the Courier's Blade from its scabbard.
 js hold('sword') # dirty hack because there's no way to force holding
 
