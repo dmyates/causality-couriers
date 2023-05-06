@@ -438,8 +438,8 @@ div#credits {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	background-color: #000066;
-	color: #ffffff;
+	background-color: #0c1821;
+	color: #fff;
 	
 	width: 90%;
 	min-height: 90%;
@@ -450,8 +450,19 @@ div#credits {
 	line-height: 1.33;
 }
 
+a,
+a:visited {
+	color: #5f8789;
+	text-decoration: none;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+
 div#credits button {
-	background-color: #000033;
+	background-color: #5F8789;
+	color: #000
 }
 
 
@@ -5626,7 +5637,11 @@ ConversationVerbs = [
 	}
 ];
 
+// CC custom functions
 
+function show_illustration(illustration) {
+	document.getElementById("illustration-img").src=`./${illustration}.png`
+}
 
 		
 		</script>
@@ -5696,7 +5711,7 @@ ConversationVerbs = [
 					<p style="text-align: center;"><button type="button" onclick="show_options()" data-localisation_key="options">options</button>
 					
 					<!-- to add a 'credits' page to your game, uncomment: -->
-					<!-- <button type="button" onclick="show_credits();">credits</button> -->
+					<button type="button" onclick="show_credits();">credits</button>
 					<!-- ...and write your credits info under <div id="credits">, below -->
 					
 				</p></div>
@@ -5743,11 +5758,15 @@ ConversationVerbs = [
 			<div id="credits">
 			
 				<!-- Write your credits here. -->
+				<p>Story, prose and design and game logic by <a href="https://davidyat.es">David Yates</a>, with some creative assistance from <a href="https://chat.openai.com/">ChatGPT</a>.</p><br>
+
+				<p>Illustrations generated using <a href="https://stability.ai/blog/stable-diffusion-public-release">Stable Diffusion</a>.</p><br>
 				
-				<p>This game was made with <a target="_blank" href="https://versificator.itch.io/gruescript">gruescript</a>.</p>
+				<p>Made with <a target="_blank" href="https://github.com/robindouglasjohnson/gruescript">Gruescript</a> by Robin Johnson.</p><br>
+
+				<p>Developed over a couple of weekends for <a href="https://ldjam.com/">Ludum Dare 53: Delivery</a>.
 
 				<p style="text-align: center;"><button type="button" onclick="hide_credits()">done</button></p>
-				
 			</div>
 		
 		</div>
