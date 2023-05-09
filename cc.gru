@@ -72,7 +72,7 @@ at apartment
 say The sword is hanging up above your television. People have complimented you on the cool decoration, unaware of its true purpose.
 
 thing collection_tag collection tag
-desc &amp;nbsp;
+desc &nbsp;
 tags portable
 carried
 cverbs twist
@@ -163,7 +163,7 @@ say You try to duck out of the drone's way, but it swoops down to meet you. Befo
 say
 say Next time, consider doing something other than endlessly dodging the homicidal drone.
 say
-die GAME OVER
+die THE END
 
 thing dodge_variants
 prop 1 You dive out of the drone's path just as it lunges for you. Its rotor blades miss your ear by inches. Undeterred, the drone turns around and fixes its red light on you in preparation for another strike.
@@ -362,6 +362,7 @@ give delivery_tag
 js hold('delivery_tag')
 
 thing delivery_tag delivery tag
+name delivery tag
 desc &nbsp;
 tags portable
 cverbs twist
@@ -452,7 +453,7 @@ say You clutch at your stomach and double over, overcome with dizziness. The ins
 say
 say The last thing you hear is shattering glass, as the wine bottle drops from your hand.
 say
-die GAME OVER
+die THE END
 
 setverb empty wine_bottle
 carried $this
@@ -675,14 +676,14 @@ run alien_attack
 
 proc alien_attack
 say TODO this
-die GAME OVER
+die THE END
 
 # wait too long and die through inaction
 rule
 has alien_remains reinforced
 eq $turns_since_alien_died 5
 say TODO this
-die GAME OVER
+die THE END
 
 # Escape aliens
 verb go desert
@@ -704,12 +705,13 @@ run teleport_prison
 
 # PART THREE: CONCLUSION
 #var ending 1 # for testing
-#var ending 2 # for testing
+var ending 2 # for testing
 
-room apartment You're in your apartment, a welcome sight after a harrowing jaunt through time and space.
+room apartment You're in your apartment, a welcome sight after a harrowing jaunt through time and space. {apartment.$additional}
 prop display Your apartment
 prop year Present day
-#tags start # for testing
+prop additional &nbsp;
+tags start # for testing
 
 thing television TV
 name TV
@@ -719,7 +721,7 @@ loc apartment
 ## Prison ending
 proc teleport_prison
 assign ending 1
-goto apartment # TODO change illustration
+goto apartment
 say Your surroundings resolve into the familiar colours of your apartment, and you immediately crash on the couch.
 js show_illustration("apartment")
 say
@@ -772,6 +774,7 @@ rule
 here television
 has television emergency
 eq $emergency_counter 3
+write apartment.additional The state-mandated wanted poster of Public Enemy &#x23;1 hangs on the wall opposite your front door.
 bring wanted_poster
 
 rule
@@ -821,6 +824,7 @@ say
 say With all the changes you've made to the past, do they even exist anymore?
 say
 goto prison
+bring wanted_poster
 all carried
 hide $this
 
@@ -835,15 +839,69 @@ loc prison
 tags portable
 verbs play
 
+verb examine wanted_poster
+at prison
+tag wanted_poster examined
+say This poster is a deeply familiar image. You've seen it in every house you've ever been to. But until your arrest, you never recognised your own face on it. Seemingly no-one else did either.
+say
+say In another sense, you had never seen it until after you returned from your fateful delivery. Every memory is superimposed on another. The strongest ones are full of absurdities such as this. For the passage of causality is not a clockwork mechanism, perfectly calibrated, but a writhing snake that imposes itself through force.
+
 verb play harmonica
+tag harmonica played
 say You sit down on your prison bed and play your prison harmonica. Its sorrowful sound fills the room.
 say
-die GAME OVER
+
+rule
+at prison
+has harmonica played
+has wanted_poster examined
+!here collection_tag_two
+say
+say You hear a pop, followed by a sizzle. A tiny bolt of lightning flashes before your eyes, and a piece of green plastic falls to the floor.
+bring collection_tag_two
+
+thing collection_tag_two collection tag
+name collection tag
+desc The instructions on this collection tag are written in an unfamiliar script. Looking at it makes you feel as through spiders are crawling across your eyeballs.
+cverbs twist
+
+verb examine collection_tag_two
+!carried $this
+say A collection tag lies on the floor of your cell. Looks like the company hasn't forgotten about you after all.
+
+verb collection_tag_two
+say You twist the collection tag and the room starts to spin.
+say
+die THE END
 
 ## Lecture ending
 proc teleport_home
 assign ending 2
+say Your surroundings resolve into the familiar colours of your apartment, and you immediately crash on the couch.
+js show_illustration("apartment")
+write apartment.additional Your living room's main features are a couch television and coffee table. There's a sealed letter in the middle of the coffee table.
 goto apartment
+bring envelop
+
+thing envelop sealed envelop
+name sealed envelop
+desc A crisp, cream-coloured envelope. It's addressed to you and bears the logo of the Causality Couriers.
+tags portable sealed
+
+setverb open envelope
+has $this sealed
+
+verb open envelope
+give $this
+untag $this sealed
+say You tear open the envelope and pull out a letter. Or rather, a neatly folded blank sheet of paper. The envelope is otherwise empty.
+say
+say As you're puzzling over this, a humanoid figure made of pure light appears in your living room. The figure hovers over your coffee table, legs in a lotus position.
+bring humanoid_figure
+
+thing humanoid_figure being of pure light
+name being of pure light
+desc It h
 
 # General procedures
 proc has_any_parcel # succeeds if any item with the parcel tag is carried
