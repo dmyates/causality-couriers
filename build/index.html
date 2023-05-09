@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
+		<title>Casuality Couriers</title>
 		<style type="text/css">
 			
 /* "exportable" CSS, i.e., whatever should be included in the downloaded games */
@@ -3510,7 +3511,10 @@ function die(message) {
 	if(!message) {
 		message = Localise.you_are_dead;
 	}
-	say("*** " + message + " ***");
+	//say("*** " + message + " ***");
+	$('#inventory_container').slideUp();
+	$('#room_description_container').slideUp();
+	$('#holding_container').slideUp();
 	
 	delete_stored_game();
 	
@@ -4248,6 +4252,11 @@ function cancel_restart() {
 function restart_game() {
 	$('#save_prompt').slideUp();
 	$('#room_description').slideDown();
+
+	$('#inventory_container').slideDown();
+	$('#room_description_container').slideDown();
+	$('#holding_container').slideDown();
+
 	GAME_OVER = false;
 	Game = JSONfn.parse(INITIAL_GAME);
 	document.getElementById('scroller_content').innerHTML = '';
@@ -4255,7 +4264,8 @@ function restart_game() {
 	//describe_room();
 	update_display();
 	set_heights();
-	document.getElementById("illustration-img").src="./barricade.png"
+
+	show_illustration("title");
 }
 
 
@@ -4917,6 +4927,8 @@ function load_game(game_name, suppress_message) {
 	
 	describe_room_in_scroller();
 	update_display();
+
+	show_illustration(Game.vars.illustration);
 }
 
 function delete_game(game_name) {
@@ -5640,7 +5652,10 @@ ConversationVerbs = [
 // CC custom functions
 
 function show_illustration(illustration) {
-	document.getElementById("illustration-img").src=`./${illustration}.png`
+	Game.vars.illustration = illustration;
+	img = document.getElementById("illustration-img");
+  img.src=`./${illustration}.png`;
+  img.style.filter = '';
 }
 
 		
@@ -5649,7 +5664,7 @@ function show_illustration(illustration) {
 	</head>
 	<body class="gs_export foo">
 		<div id="illustration">
-			<img id="illustration-img" src="./barricade.png"></img>
+			<img id="illustration-img" src="./title.png"></img>
 		</div>
 		<div id="game">
 	
@@ -5758,13 +5773,13 @@ function show_illustration(illustration) {
 			<div id="credits">
 			
 				<!-- Write your credits here. -->
-				<p>Story, prose and design and game logic by <a href="https://davidyat.es">David Yates</a>, with some creative assistance from <a href="https://chat.openai.com/">ChatGPT</a>.</p><br>
+				<p>Story, prose, design and game code by <a href="https://davidyat.es">David Yates</a>, with some creative assistance from <a href="https://chat.openai.com/">ChatGPT</a>.</p><br>
 
 				<p>Illustrations generated using <a href="https://stability.ai/blog/stable-diffusion-public-release">Stable Diffusion</a>.</p><br>
 				
 				<p>Made with <a target="_blank" href="https://github.com/robindouglasjohnson/gruescript">Gruescript</a> by Robin Johnson.</p><br>
 
-				<p>Developed over a couple of weekends for <a href="https://ldjam.com/">Ludum Dare 53: Delivery</a>.
+				<p>Developed over a couple of weekends for <a href="https://ldjam.com/">Ludum Dare 53: Delivery</a> (Extra).
 
 				<p style="text-align: center;"><button type="button" onclick="hide_credits()">done</button></p>
 			</div>
@@ -5779,9 +5794,9 @@ function show_illustration(illustration) {
 	<textarea id="gsEdit" style="display: none;"># '#' means this line (or the rest of this line) is a comment
 # (if you want to output '#' during your game, use "&amp;num;")
 game Causality Couriers # Game title
-id JITLD53 # game ID (used to identify cookies; should be unique on your site)
+id CCLD53 # game ID (used to identify cookies; should be unique on your site)
 author David Yates
-version 0.0.1
+version 1.0.0
 person 2 # 2nd person, i.e. "You are in..."
 examine on # if 'on', the verb 'examine' will be implemented by clicking nouns
 conversation on
@@ -5821,16 +5836,22 @@ localise instructions This is a text adventure game built in Robin Johnson's Gru
 localise intro_by by
 localise you_see_nothing_special_about_that {The $this} is just an ordinary, everyday {$this}. It looks, sounds and smells exactly as you would expect it to.
 localise you_can_also_see What's here:
-#localise youre_holding Holding:
-#localise youre_carrying Carrying:
 # Introductory text
-say You're standing in front of barricade built of junk, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
+say You're standing in front of barricade built of stone and rusted steel, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
 say
-say Corrugated iron sheets, bits of stone and broken brick, twisted remains of cars and lawnmowers tower above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
+say Rusty corrugated iron sheets and the twisted remains of cars and lawnmowers, fill in the gaps between large stone slabs above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
 say 
 say You double-check your collection tag. Yep, this must be the place. But how to get in?
 say
 js hold('collection_tag') # hold tag at start of game
+
+var illustration title # set first illustration
+var titlegone 0
+
+rule
+eq $titlegone 0
+assign titlegone 1
+js show_illustration('barricade')
 
 ## PART ONE: COLLECTION
 thing sword Courier's Blade
@@ -5840,9 +5861,13 @@ carried
 tags portable
 
 verb drop sword
-at apartment: This sword has saved your life enough times to earn a permanent spot on your back.
+!at apartment
+say This sword has saved your life enough times to earn a permanent spot on your back.
+
+verb drop sword
+at apartment 
 say You hang the Courier's Blade in its usual spot above your television.
-bring sword
+continue
 
 verb examine sword
 at apartment
@@ -5850,7 +5875,7 @@ at apartment
 say The sword is hanging up above your television. People have complimented you on the cool decoration, unaware of its true purpose.
 
 thing collection_tag collection tag
-desc &nbsp;
+desc &amp;nbsp;
 tags portable
 carried
 cverbs twist
@@ -5885,7 +5910,7 @@ say It doesn't look like there's anything else for miles around. Besides, if you
 
 thing barricade
 name barricade
-desc It looks like it's been here for a long time, slowly, almost organically growing. There's at least half a junkyard's worth of discarded machinary and twisted metal, mixed with half a quarry's worth of different sized rocks.
+desc It looks like it's been here for a long time, slowly, almost organically growing. There's at least half a junkyard's worth of discarded machinary and twisted metal, mixed with half a quarry's worth of stone slabs.
 loc before_barricade
 tags immovable impenetrable
 
@@ -5924,7 +5949,7 @@ run x_drone
 !has $this waved: It knows you're here already!
 tag $this waved
 say You wave at the drone. There's loud clicking sound, audible over the whir of its rotors, and bright red beam shines directly in your eyes. You cry out and look away. The drone clicks again, and its rotors get louder. It's coming straight for you!
-js show_illustration("drone")
+js show_illustration('drone')
 
 var dodge_count 0
 
@@ -5941,7 +5966,7 @@ say You try to duck out of the drone's way, but it swoops down to meet you. Befo
 say
 say Next time, consider doing something other than endlessly dodging the homicidal drone.
 say
-die THE END
+run the_end 1
 
 thing dodge_variants
 prop 1 You dive out of the drone's path just as it lunges for you. Its rotor blades miss your ear by inches. Undeterred, the drone turns around and fixes its red light on you in preparation for another strike.
@@ -5971,7 +5996,7 @@ say Two halves of the drone drop at your feet, smoking. The red light has gone o
 hide drone
 bring destroyed_drone
 write sword.savedlife three times now
-js show_illustration("barricade")
+js show_illustration('droneexplode')
 
 thing destroyed_drone
 desc It's been sliced clean in two. From either side, tendrils of black smoke curl up into the sky.
@@ -5987,22 +6012,28 @@ eq before_barricade.dir.opening 0
 eq $turns_since_drone_destroyed 2
 write before_barricade.goin A dark opening has appeared near the middle.
 say
-say You're busy contemplating the remains of the thing that tried to kill you when you notice movement on the barricade. Two pieces of corrugated iron are being pulled apart, accompanied by the sound of squeaky pulleys and loud metallic scraping, to reveal a dark opening.
+say You're busy contemplating the remains of the thing that tried to kill you when you notice movement on the barricade. A stone slab is being hauled up, accompanied by the sound of squeaky pulleys and loud metallic scraping, to reveal a dark opening.
 open before_barricade opening wooden_shed
+js show_illustration('barricadeopen')
 
 verb go opening
 at before_barricade
-js show_illustration("shed")
 !has wooden_shed visited
+js show_illustration('shed')
 say One hand on the hilt of your sword, you step cautiously into the opening. As your foot crosses the threshold, an electric light blinks on. It's dim and inconstant, but provides enough light for you to see you're in a tight hallway. The ceiling is quite low, forcing you to stoop, and the walls so close that you have no room to draw your sword.
 say
 say "Come in, come in!" says a voice from the end of the hall, which appears to open out into a larger room. "Sorry about the drone! Thought you were someone else."
 say
 say For the sake of the job, you proceed through the hallway.
 say
-tag wooden_shed visited
 goto wooden_shed
+tag wooden_shed visited
 
+verb go opening
+at before_barricade
+has wooden_shed visited
+js show_illustration('shed')
+continue
 
 ## Wooden shed
 room wooden_shed You find yourself in a dimly lit wooden shed. The walls are lined with photographs, newspaper clippings and drawing pins attached by strings. { wooden_shed.fletcher }
@@ -6015,11 +6046,11 @@ dir outside before_barricade
 
 verb go outside
 at wooden_shed
-js show_illustration("barricade")
+js show_illustration('barricadeopen')
 continue
 
 thing walls
-desc The wood surface of the wall is barely visible beneath the hundres of photographs, newspaper clippings, printed emails and memoranda covering it. Many are complete with captions scrawled in red ink, and all are connected with different coloured strings. All the standard conspiracy theories are covered -- you can see stuff about the moon landing, JFK, flat earth, hollow earth, chemtrails, ancient aliens, lizard people, Freemasons, the Knights Templar, the Bilderburg Group, Nessie and Bigfoot. There's a bold circle around a photograph of the Great Pyramid of Giza.
+desc The wood surface of the wall is barely visible beneath the hundres of photographs, newspaper clippings, printed emails and memoranda covering it. Many are complete with captions scrawled in red ink, and all are connected with different coloured strings. All the standard conspiracy theories are covered – you can see stuff about the moon landing, JFK, flat earth, hollow earth, chemtrails, ancient aliens, lizard people, Freemasons, the Knights Templar, the Bilderburg Group, Nessie and Bigfoot. There's a bold circle around a photograph of the Great Pyramid of Giza.
 loc wooden_shed
 
 verb examine walls
@@ -6037,16 +6068,41 @@ prop start_conversation "You must be the courier," says the man, looking you up 
 prop end_conversation "G'bye then."
 
 verb talk fletcher
-js show_illustration("fletcher")
+js show_illustration('fletcher')
+continue
+
+verb talk fletcher
+!has fletcher introduced
 run introduce $this
 assign $this.subject $this.callme
 write wooden_shed.fletcher A shifty character named Fletcher stands in front of a desk, regarding you curiously.
 continue
 
 verb end_conversation fletcher # change intro line following introduction
-js show_illustration("shed")
+!has fletcher introduced
 write $this.start_conversation "Yeah?" asks Fletcher, shifting the toothpick in his mouth.
+tag fletcher introduced
 continue
+
+verb end_conversation fletcher # change intro line following introduction
+js show_illustration('shed')
+continue
+
+setverb ask_fletcher year
+!has fletcher asked_about_year
+
+verb ask_fletcher year
+tag fletcher asked_about_year
+say "What year is it?" Fletcher raises an eyebrow. "It's thirty years' too late, that's what year it is. Hell, these days I'm given to thinkin' it's a few millenia too late."
+say
+say Your facial expression must have betrayed a dissatisfaction with this answer, so Fletcher continues, "I was told you wouldn't ask too many questions. Just do this job for me, and it won't matter what year this is anymore."
+
+setverb ask_fletcher payment
+!has fletcher asked_about_payment
+
+verb ask_fletcher payment
+tag fletcher asked_about_payment
+say "You know, I admire the initiative, but I wasn't born yesterday. I've already made the payment to your employer in full."
 
 setverb ask_fletcher drone
 !has fletcher asked_about_drone
@@ -6070,7 +6126,7 @@ has walls examined
 
 verb ask_fletcher walls
 tag fletcher asked_about_walls
-say "Oh, that?" Fletcher glances around at the dense array of photographs and newspaper clippings and pantomimes laughter. "Just a little hobby of mine. Passes the time."
+say "Oh, that?" Fletcher glances around at the dense array of photographs and newspaper clippings and pantomimes laughter. "You might say I'm a student of history. I've been trying to figure out just where it was that things went so far wrong..."
 
 setverb ask_fletcher parcel
 !has fletcher asked_about_parcel
@@ -6091,7 +6147,10 @@ desc A tall, thin rectangular parcel marked FRAGILE.
 tags portable parcel dtagged
 prop shake_count 0
 prop triedopening 0
-prop tamperworry &nbsp;
+prop tamperworry &amp;nbsp;
+
+verb drop tall_parcel
+say You're not letting this parcel out of your site until it's safely delivered. Causality Couriers gives out very heavy fines to couriers who lose their parcels.
 
 setverb open tall_parcel
 !has $this open
@@ -6100,14 +6159,14 @@ setverb shake tall_parcel
 !has $this open
 
 verb shake tall_parcel
-add shake_count 1
+add $this.shake_count 1
 say You hear a sloshing sound through the wrapping.
 
 verb open tall_parcel
 !here fletcher: You really shouldn't tamper with parcels entrusted to your care. Especially not right in front of a customer.
 !here alien: You really shouldn't tamper with parcels entrusted to your care. Especially not right in front of a customer.
 add $this.triedopening 1
-gt $this.triedopening 1: As a Causality Courier, you really shouldn't tamper with parcels entrusted to you.
+gt $this.triedopening 1: As a Causality Courier, you really shouldn't tamper with parcels entrusted to you... even if it is tempting...
 gt $this.triedopening 2: As curious as you are about the contents of this package, you really shouldn't open it...
 gt $this.triedopening 3: The temptation is too great, you're not sure how much longer you can stop yourself from opening this package...
 gt $this.triedopening 4: Are you really sure you want to do this?
@@ -6123,10 +6182,21 @@ has $this open
 
 verb close tall_parcel
 carried wine_bottle: There's no point in closing it if it's empty. Make sure you're carrying something to put inside &ndash; preferably the original contents.
+run close_parcel
+
+proc close_parcel
+has wine_bottle sealed
 hide wine_bottle
 untag $this open
 write $this.desc A tall, thin rectangular parcel marked FRAGILE. You know what you did.
-say You put the wine bottle back in the parcel and close it back up.
+say You put the wine bottle back in the parcel and close it back up. 
+
+proc close_parcel
+!has wine_bottle sealed
+hide wine_bottle
+untag $this open
+write $this.desc A tall, thin rectangular parcel marked FRAGILE. You know what you did.
+say Luckily for you, this bottle of wine has a screw-on cap that you're able to replace. After replacing the cap, you put the wine bottle back in the parcel and close it back up. 
 
 setverb remove_tag tall_parcel
 held $this
@@ -6141,7 +6211,7 @@ js hold('delivery_tag')
 
 thing delivery_tag delivery tag
 name delivery tag
-desc &nbsp;
+desc &amp;nbsp;
 tags portable
 cverbs twist
 
@@ -6170,9 +6240,8 @@ say
 say He looks offended. "Twist it and see, pal."
 
 verb twist delivery_tag
-assign conversation 0
 !has $this twisted: Twisting a delivery tag will instantly transport the holder to the place and time where the parcel is to be delivered. But only once, and you've already used this one.
-!at egypt # shouldn't come up in normal gameplay
+assign conversation 0
 tag $this twisted
 say Grasping the tag firmly in both hands, you give it a hard twist. {$room.teleport_sentence}
 say
@@ -6180,8 +6249,8 @@ say Once the spinning blur in front of your eyes has turned predominantly yellow
 say 
 say You've travelled to another desert, one from long ago. Right in time to watch the construction of a monument that will last into your own time – the Great Pyramid of Giza, King Khufu's final resting place. But it's what you see when you turn around that really shocks you.
 say
-js show_illustration("pyramid")
 goto egypt
+js show_illustration('pyramid')
 
 # Parcel contents
 thing wine_bottle wine bottle
@@ -6208,7 +6277,7 @@ verb open wine_bottle
 !here fletcher: It's probably not a good idea to show Fletcher you've been tampering with his parcel.
 !here alien: You can't flash that around in front of its intended recipient!
 add $this.triedopening 1
-gt $this.triedopening 1: You shouldn't open the wine bottle, but then, you shouldn't have opened the parcel either. There's still time to turn back.
+gt $this.triedopening 1: You shouldn't open the wine bottle, but then, you shouldn't have opened the parcel either. There's still time to turn back...
 gt $this.triedopening 2: You really want to open this, eh?
 untag $this sealed
 write $this.openstatus has been opened
@@ -6231,11 +6300,12 @@ say You clutch at your stomach and double over, overcome with dizziness. The ins
 say
 say The last thing you hear is shattering glass, as the wine bottle drops from your hand.
 say
-die THE END
+run the_end 2
 
 setverb empty wine_bottle
 carried $this
 !has $this sealed
+!has $this empty
 
 verb empty wine_bottle
 !here fletcher: Fletcher probably wouldn't appreciate you pouring out his wine right in front of him.
@@ -6256,7 +6326,7 @@ prop aliendesc There appears to be an alien here, watching the construction.
 prop year ~2500 BC
 dir desert egypt_desert
 dir tentflap inside_tent
-tags start # for testing
+#tags start # for testing
 
 thing tent tent
 name tent
@@ -6265,7 +6335,29 @@ loc egypt
 verbs enter
 
 verb enter tent
+!has alien_remains reinforced: Alien portals block your path!
+!here alien_remains: You don't need to get alien blood all over someone else's tent.
 goto inside_tent
+js show_illustration('tent')
+
+verb go tentflap
+at egypt
+has alien_remains reinforced
+say Alien portals block your path!
+
+verb go tentflap
+at egypt
+here alien_remains
+say You don't need to get alien blood all over someone else's tent.
+
+verb go tentflap
+js show_illustration('tent')
+continue
+
+verb go outside
+at inside_tent
+js show_illustration('pyramid')
+continue
 
 room inside_tent You've slipped into a small goat-skin tent near the pyramid construction site. There's a fire pit in the middle and a camel-hair blanket against the far side. Whoever owns this tent is not here right now.
 prop display Inside a tent
@@ -6288,13 +6380,13 @@ say It doesn't look very comfortable, and its owner probably needs it more than 
 
 verb go desert
 at egypt
-here alien
+carried tall_parcel
 say You've got to deliver this parcel before you can go wandering off.
-give tall_parcel # for testing
+#give tall_parcel # for testing
 
 thing alien Tall Alien
 name Tall Alien
-desc A tall alien # TODO this
+desc An enormous black star-shaped creature with a leathery hide and a mass of tentacles. Looking directly at it may eventually drive you mad.
 loc egypt
 tags alive male conversation
 prop callme Gthxrynn
@@ -6304,13 +6396,29 @@ prop end_conversation "Farewell, courier. May your travels be safe and prosperou
 verb talk alien
 run introduce $this
 write egypt.aliendesc Gthxrynn of the Ythrgzlyrs stands on a small dune, watching the construction.
-js show_illustration("alien")
+js show_illustration('alien')
 continue
 
 verb end_conversation alien # change intro line
 write $this.start_conversation "Hello again, courier," says Gthxrynn.
-js show_illustration("pyramid")
+js show_illustration('pyramid')
 continue
+
+setverb ask_alien payment
+has alien disappointed
+!has alien asked_about_payment
+
+verb ask_alien payment
+tag alien asked_about_payment
+say "You want payment for the delivery of a parcel I wasn't expecting? Earth customs certainly are bizarre. Oh well, here you go."
+say
+say The squelching sounds that follow make you regret your question. After some time, Gthxrynn extends a tentacle and deposits three writhing grey slugs in your outstretched hands. "I think I got the currency conversion right," says the alien.
+give slugs
+
+thing slugs slugs
+name slugs
+desc Apparently the Ythrgzlyrs use live slugs as money. They squirm around in your palms, leaving a sticky residue that makes you thoroughly regret trying to hustle Gthxrynn.
+tags portable
 
 setverb ask_alien language
 !has alien asked_about_language
@@ -6330,8 +6438,8 @@ setverb ask_alien learnings
 has alien asked_about_pyramid
 
 verb ask_alien learnings
-say "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offence."
-# TODO variations
+chance 1 2: "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offence."
+say "Oh, what have I learnt so far? Well, they appear to have highly advanced knowledge of mathematics and especially geometry. Amazing that they can fit all that knowledge in such small heads. No offence."
 
 setverb ask_alien name
 !has alien asked_about_name
@@ -6373,7 +6481,6 @@ run alien_drink
 # If the bottle is empty
 proc alien_drink
 has wine_bottle empty
-say The wine is empty.
 say { alien.name } thanks you graciously as it wraps a tentacle around the tall parcel. There's a quick swish, and suddenly the parcel is open, and another of the alien's tentacles is holding an empty glass bottle. 
 say
 say The alien's features contort in what is probably a gesture of confusion. "Why would anyone send me this?"
@@ -6383,6 +6490,13 @@ say
 say "It's a pity too, from the smell of the bottle, I'm sure I would have greatly enjoyed this wine. Oh well, probably just someone playing a joke on old {alien.name}! Thank you for the delivery, courier!"
 tag alien disappointed
 assign ending 2
+js show_illustration('alien')
+
+setverb ask_alien bottle
+has alien disappointed
+
+verb ask_alien bottle
+say "A few of my friends know I quite enjoy Earth wines. Maybe I did something to upset one of them..."
 
 verb go desert
 at egypt
@@ -6402,14 +6516,14 @@ say { alien.name } thanks you graciously as it wraps a tentacle around the tall 
 say
 say "Marvellous! My favourite vintage."
 say
-say With astonishing dexterity, {alien.name} uses a single tentacle to screw off the top of the bottle and then aim it at the hole you take to be its mouth-equivalent. There's a sharp sucking sound, and the bottle is drained instantly.
+say With astonishing dexterity, {alien.name} uses a single tentacle to pop the top off the bottle and then aim it at the hole you take to be its mouth-equivalent. There's a sharp sucking sound, and the bottle is drained instantly.
 say
 say Then the alien explodes.
 hide alien
-js show_illustration("pyramid") # TODO explosion
 write egypt.aliendesc Bits of smoking alien flesh lie scattered across the sand.
 write tent.desc The tent is small and dome-shaped. It appears to made from goat skin. Like everything else, it's covered in alien remains.
 bring alien_remains
+js show_illustration('aliendie')
 
 thing alien_remains alien remains
 name alien remains
@@ -6430,6 +6544,7 @@ say There's a sudden popping sound to the east. And the west. And the north. And
 say
 say And even though you're still not sure where their eyes are, you get the distinct impression that they're all bearing down on you. It's fight or flight.
 bring alien_swarm
+js show_illustration('portals')
 
 thing alien_swarm alien swarm
 name alien swarm
@@ -6453,15 +6568,25 @@ verb strike alien_swarm
 run alien_attack
 
 proc alien_attack
-say TODO this
-die THE END
+say Brandishing your sword, you fly at the nearest portal, which an alien is poking its head out of. An unholy scream rends the air as you bring your sword down on its neck, and a spray of bright green blood splatters across your face.
+say
+say As you turn to face the next alien, you realise that this may not have been a good idea. Three aliens have emerged from their portals, and are advancing on you, with another four close on their tails. Additional portals continue to materialise all around you.
+say
+say You hold your ground valiantly, swinging your sword and slicing a commendable amount of alien flesh. But the aliens keep advancing. Before long, you feel crushing grip of a massive tentacle against your windpipe.
+say
+say The sword slips from your grasp as you gasp for air, and the world goes dark.
+say
+run the_end 3
 
 # wait too long and die through inaction
 rule
 has alien_remains reinforced
 eq $turns_since_alien_died 5
-say TODO this
-die THE END
+say
+say So many portals have appeared that the sky is entirely obscured by black squirming aliens. You're surrounded on all sides. The aliens are so close that you can smell their putrid odour.
+say
+say A tentacle brushes against your arm, followed by another, and another. You try to reach for your sword, but merely grasp at another tentacle. You can feel a crushing pressure across your chest as the world turns black.
+run the_end 4
 
 # Escape aliens
 verb go desert
@@ -6483,13 +6608,13 @@ run teleport_prison
 
 # PART THREE: CONCLUSION
 #var ending 1 # for testing
-var ending 2 # for testing
+#var ending 2 # for testing
 
-room apartment You're in your apartment, a welcome sight after a harrowing jaunt through time and space. {apartment.$additional}
+room apartment You're in your apartment, a welcome sight after a harrowing jaunt through time and space. {apartment.additional}
 prop display Your apartment
 prop year Present day
-prop additional &nbsp;
-tags start # for testing
+prop additional It's good to be home.
+#tags start # for testing
 
 thing television TV
 name TV
@@ -6500,9 +6625,10 @@ loc apartment
 proc teleport_prison
 assign ending 1
 goto apartment
+write apartment.additional Something feels a little different from usual.
 say Your surroundings resolve into the familiar colours of your apartment, and you immediately crash on the couch.
-js show_illustration("apartment")
 say
+js show_illustration('apartment')
 
 setverb turn_on television
 !has television turnedon
@@ -6522,8 +6648,8 @@ has television turnedon
 verb watch television
 has television soap
 say Two celebrated character actors are declaring their undying love to each other, as one lies in a hospital bed.
-say
 eq $ending 1 # prison ending
+say
 say You head is still throbbing. You've never had it this badly before.
 tag television sickof
 
@@ -6605,6 +6731,7 @@ goto prison
 bring wanted_poster
 all carried
 hide $this
+js show_illustration('prison')
 
 room prison You're in a prison cell, awaiting trial.
 prop display Your cell
@@ -6625,41 +6752,127 @@ say
 say In another sense, you had never seen it until after you returned from your fateful delivery. Every memory is superimposed on another. The strongest ones are full of absurdities such as this. For the passage of causality is not a clockwork mechanism, perfectly calibrated, but a writhing snake that imposes itself through force.
 
 verb play harmonica
+!carried harmonica
+give harmonica
+continue
+
+verb play harmonica
 tag harmonica played
 say You sit down on your prison bed and play your prison harmonica. Its sorrowful sound fills the room.
-say
 
 rule
 at prison
 has harmonica played
 has wanted_poster examined
-!here collection_tag_two
+!has collection_tag_two appeared
 say
 say You hear a pop, followed by a sizzle. A tiny bolt of lightning flashes before your eyes, and a piece of green plastic falls to the floor.
 bring collection_tag_two
+tag collection_tag_two appeared
 
 thing collection_tag_two collection tag
 name collection tag
 desc The instructions on this collection tag are written in an unfamiliar script. Looking at it makes you feel as through spiders are crawling across your eyeballs.
+tags portable
 cverbs twist
 
 verb examine collection_tag_two
 !carried $this
 say A collection tag lies on the floor of your cell. Looks like the company hasn't forgotten about you after all.
 
-verb collection_tag_two
-say You twist the collection tag and the room starts to spin.
+verb twist collection_tag_two
+say You twist the collection tag. The room starts to spin.
 say
-die THE END
+run the_end 5
 
 ## Lecture ending
 proc teleport_home
 assign ending 2
 say Your surroundings resolve into the familiar colours of your apartment, and you immediately crash on the couch.
-js show_illustration("apartment")
-write apartment.additional Your living room's main features are a couch television and coffee table. There's a sealed letter in the middle of the coffee table.
+write apartment.additional Your living room's main features are a couch, television and coffee table. There's a sealed letter in the middle of the coffee table.
 goto apartment
 bring envelope
+js show_illustration('apartment')
+
+thing envelope sealed envelope
+name sealed envelope
+desc A crisp, cream-coloured envelope. It's addressed to you and bears the logo of the Causality Couriers.
+tags portable sealed
+
+setverb open envelope
+has $this sealed
+
+verb open envelope
+give $this
+untag $this sealed
+say You tear open the envelope and pull out a letter. Or rather, a neatly folded blank sheet of paper. The envelope is otherwise empty.
+say
+say As you're puzzling over this, a humanoid figure made of pure light appears in your living room. The figure hovers over your coffee table, legs in a lotus position.
+bring humanoid_figure
+
+thing humanoid_figure being of pure light
+name being of pure light
+desc A human figure made of yellow light. The figure has no identifying details – it is more the idea of a person than anyone specific. It's painful to look at the figure directly, and you find yourself shielding your eyes.
+tags conversation alive justarrived
+prop start_conversation "Hello." The figure speaks in a rich, deep voice.
+prop end_conversation "Goodbye."
+
+verb talk humanoid_figure
+js show_illustration('lightbeing')
+continue
+
+setverb ask_humanoid_figure appearance
+has humanoid_figure justarrived
+
+verb ask_humanoid_figure appearance
+untag humanoid_figure justarrived
+tag humanoid_figure knows
+say "I am not a real person, merely a message. I represent the management of Causality Couriers. We are aware of the deviations from standard procedure that occurred during your latest job."
+say
+say You feel your heart sink. Should you try to justify your actions, or just apologise?
+
+setverb tell_humanoid_figure apologise
+has humanoid_figure knows
+
+setverb tell_humanoid_figure justify
+has humanoid_figure knows
+
+verb tell_humanoid_figure apologise
+untag humanoid_figure knows
+tag humanoid_figure integrity
+say "No apology is required, or expected. Causality Couriers has received payment for this delivery, and the terms of the contract have been fulfilled. As per clause 8.7A, couriers can exercise their discretion over the effects of a package on the timestream, provided a delivery is ultimately made."
+say
+say While you're mostly relieved to hear this, you make a mental note never to send a package of your own with Causality Couriers.
+
+verb tell_humanoid_figure justify
+untag humanoid_figure knows
+tag humanoid_figure integrity
+say "No justification is required, or expected. Causality Couriers has received payment for this delivery, and the terms of the contract have been fulfilled. As per clause 8.7A, couriers can exercise their discretion over the effects of a package on the timestream, provided a delivery is actually made."
+say
+say While you're mostly relieved to hear this, you make a mental note never to send a package of your own with Causality Couriers.
+say
+say "However, a deduction of 100 credits will be made from your pay for this job."
+say
+say You wince. The job was only worth 125.
+
+setverb tell_humanoid_figure integrity
+has humanoid_figure integrity
+
+verb tell_humanoid_figure integrity
+untag humanoid_figure integrity
+tag humanoid_figure onyourown
+say "Causality Couriers has no official position on the integrity of the timeline. Individual couriers are expected to use their own judgement. Management will only intervene in a delivery should there be reasonable cause to suggest that said delivery may prevent the founding of Causality Couriers, or the receipt of funds due to Causality Couriers." 
+
+verb end_conversation humanoid_figure
+has $this onyourown
+assign conversation 0
+say
+say "Your payment will be processed in two to three business days. Goodbye." 
+say
+say The light being disappears, leaving you to contemplate the awesome responsibility of your delivery job. You glance at the coffee table and notice that the being has left behind a green plastic collection tag.
+say
+run the_end 6
+js show_illustration('apartment')
 
 # General procedures
 proc has_any_parcel # succeeds if any item with the parcel tag is carried
@@ -6678,5 +6891,80 @@ proc draw_sword
 say You reach back and draw the Courier's Blade from its scabbard.
 js hold('sword') # dirty hack because there's no way to force holding
 
+# Game endings
+proc the_end the_ending
+say <center><b>THE END</b>
+say
+run postmortem $the_ending
+js document.getElementById('illustration-img').style.filter = 'grayscale(100%)';
+
+proc postmortem the_ending
+eq $the_ending 1
+say You got the <b>Killed by a Drone Ending</b> (1/6)
+say
+say Delivery status&amp;colon; PARCEL NOT COLLECTED
+say Payment received&amp;colon; 0 credits
+say
+die
+
+proc postmortem the_ending
+eq $the_ending 2
+say You got the <b>Poisoned Ending</b> (2/6)
+say
+say Delivery status&amp;colon; LOST IN TRANSIT
+say Payment received&amp;colon; -1000 credits (to be paid by next of kin)
+say Times parcel was shaken&amp;colon; {tall_parcel.shake_count}
+run payment_enquiries
+say
+die
+
+proc postmortem the_ending
+eq $the_ending 3
+say You got the <b>Go Down Fighting Ending</b> (3/6)
+say
+say Delivery status&amp;colon; COMPLETE
+say Payment received&amp;colon; 125 credits (to next of kin)
+say Times parcel was shaken&amp;colon; {tall_parcel.shake_count}
+run payment_enquiries
+say
+die
+
+proc postmortem the_ending
+eq $the_ending 4
+say You got the <b>Hesitation Kills Ending</b> (4/6)
+say
+say Delivery status&amp;colon; COMPLETE
+say Payment received&amp;colon; 125 credits (to next of kin)
+say Times parcel was shaken&amp;colon; {tall_parcel.shake_count}
+run payment_enquiries
+say
+die
+
+proc postmortem the_ending
+eq $the_ending 5
+say You got the <b>Radically Altered History Ending</b> (5/6)
+say
+say Delivery status&amp;colon; COMPLETE
+say Payment received&amp;colon; 125 credits
+say Times parcel was shaken&amp;colon; {tall_parcel.shake_count}
+run payment_enquiries
+say
+die
+
+proc postmortem the_ending
+eq $the_ending 6
+say You got the <b>Maverick Ending</b> (6/6)
+say
+say Delivery status&amp;colon; DAMAGED IN TRANSIT
+say Payment received&amp;colon; 25 credits
+say Times parcel was shaken&amp;colon; {tall_parcel.shake_count}
+run payment_enquiries
+say
+die
+
+proc payment_enquiries
+has fletcher asked_about_payment
+has alien asked_about_payment
+say You've earned the <b>Hustler Achievement</b>, for attempting to extract an extra payment from both the consigner and consignee.
 </textarea>
 </html>

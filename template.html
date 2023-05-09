@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
+		<title>Casuality Couriers</title>
 		<style type="text/css">
 			
 /* "exportable" CSS, i.e., whatever should be included in the downloaded games */
@@ -3510,7 +3511,10 @@ function die(message) {
 	if(!message) {
 		message = Localise.you_are_dead;
 	}
-	say("*** " + message + " ***");
+	//say("*** " + message + " ***");
+	$('#inventory_container').slideUp();
+	$('#room_description_container').slideUp();
+	$('#holding_container').slideUp();
 	
 	delete_stored_game();
 	
@@ -4248,6 +4252,11 @@ function cancel_restart() {
 function restart_game() {
 	$('#save_prompt').slideUp();
 	$('#room_description').slideDown();
+
+	$('#inventory_container').slideDown();
+	$('#room_description_container').slideDown();
+	$('#holding_container').slideDown();
+
 	GAME_OVER = false;
 	Game = JSONfn.parse(INITIAL_GAME);
 	document.getElementById('scroller_content').innerHTML = '';
@@ -4255,7 +4264,8 @@ function restart_game() {
 	//describe_room();
 	update_display();
 	set_heights();
-	document.getElementById("illustration-img").src="./barricade.png"
+
+	show_illustration("title");
 }
 
 
@@ -4917,6 +4927,8 @@ function load_game(game_name, suppress_message) {
 	
 	describe_room_in_scroller();
 	update_display();
+
+	show_illustration(Game.vars.illustration);
 }
 
 function delete_game(game_name) {
@@ -5640,7 +5652,10 @@ ConversationVerbs = [
 // CC custom functions
 
 function show_illustration(illustration) {
-	document.getElementById("illustration-img").src=`./${illustration}.png`
+	Game.vars.illustration = illustration;
+	img = document.getElementById("illustration-img");
+  img.src=`./${illustration}.png`;
+  img.style.filter = '';
 }
 
 		
@@ -5649,7 +5664,7 @@ function show_illustration(illustration) {
 	</head>
 	<body class="gs_export foo">
 		<div id="illustration">
-			<img id="illustration-img" src="./barricade.png"></img>
+			<img id="illustration-img" src="./title.png"></img>
 		</div>
 		<div id="game">
 	
@@ -5758,13 +5773,13 @@ function show_illustration(illustration) {
 			<div id="credits">
 			
 				<!-- Write your credits here. -->
-				<p>Story, prose and design and game logic by <a href="https://davidyat.es">David Yates</a>, with some creative assistance from <a href="https://chat.openai.com/">ChatGPT</a>.</p><br>
+				<p>Story, prose, design and game code by <a href="https://davidyat.es">David Yates</a>, with some creative assistance from <a href="https://chat.openai.com/">ChatGPT</a>.</p><br>
 
 				<p>Illustrations generated using <a href="https://stability.ai/blog/stable-diffusion-public-release">Stable Diffusion</a>.</p><br>
 				
 				<p>Made with <a target="_blank" href="https://github.com/robindouglasjohnson/gruescript">Gruescript</a> by Robin Johnson.</p><br>
 
-				<p>Developed over a couple of weekends for <a href="https://ldjam.com/">Ludum Dare 53: Delivery</a>.
+				<p>Developed over a couple of weekends for <a href="https://ldjam.com/">Ludum Dare 53: Delivery</a> (Extra).
 
 				<p style="text-align: center;"><button type="button" onclick="hide_credits()">done</button></p>
 			</div>
