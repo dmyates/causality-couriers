@@ -516,7 +516,7 @@ give tall_parcel # for testing
 
 thing alien Tall Alien
 name Tall Alien
-desc A tall alien # TODO this
+desc An enormous black star-shaped creature with a leathery hide and a mass of tentacles. Looking directly at it may eventually drive you mad.
 loc egypt
 tags alive male conversation
 prop callme Gthxrynn
@@ -552,8 +552,8 @@ setverb ask_alien learnings
 has alien asked_about_pyramid
 
 verb ask_alien learnings
-say "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offence."
-# TODO variations
+chance 1 2: "Oh, what have I learnt so far? Well, it's ingenious how they've rigged up all these ramps and levers to move such big blocks of stone around. But I suppose one has to invent such things to compensate for the deficiencies of such feeble, squat bodies. No offence."
+say "Oh, what have I learnt so far? Well, they appear to have highly advanced knowledge of mathematics and especially geometry. Amazing that they can fit all that knowledge in such small heads. No offence."
 
 setverb ask_alien name
 !has alien asked_about_name
@@ -675,14 +675,25 @@ verb strike alien_swarm
 run alien_attack
 
 proc alien_attack
-say TODO this
+say Brandishing your sword, you fly at the nearest portal, which an alien is poking its head out of. An unholy scream rends the air as you bring your sword down on its neck, and a spray of bright green blood splatters across your face.
+say
+say As you turn to face the next alien, you realise that this may not have been a good idea. Three aliens have emerged from their portals, and are advancing on you, with another four close on their tails. Additional portals continue to materialise all around you.
+say
+say You hold your ground valiantly, swinging your sword and slicing a commendable amount of alien flesh. But the aliens keep advancing. Before long, you feel crushing grip of a massive tentacle against your windpipe.
+say
+say The sword slips from your grasp as you gasp for air, and the world goes dark.
+say
 die THE END
 
 # wait too long and die through inaction
 rule
 has alien_remains reinforced
 eq $turns_since_alien_died 5
-say TODO this
+say
+say So many portals have appeared that the sky is entirely obscured by black squirming aliens. You're surrounded on all sides. The aliens are so close that you can smell their putrid odour.
+say
+say A tentacle brushes against your arm, followed by another, and another. You try to reach for your sword, but merely grasp at another tentacle. You can feel a crushing pressure across your chest as the world turns black.
+say
 die THE END
 
 # Escape aliens
@@ -901,7 +912,57 @@ bring humanoid_figure
 
 thing humanoid_figure being of pure light
 name being of pure light
-desc It h
+desc A human figure made of blue light. The figure has no identifying details – it is more the idea of a person than anyone specific. 
+tags conversation alive justarrived
+prop start_conversation "Hello." The figure speaks in a rich, deep voice.
+prop end_conversation "Goodbye."
+
+setverb ask_humanoid_figure appearance
+has humanoid_figure justarrived
+
+verb ask_humanoid_figure appearance
+untag humanoid_figure justarrived
+tag humanoid_figure knows
+say "I am not a real person, merely a message. I represent the management of Causality Couriers. We are aware of the deviations from standard procedure that occurred during your latest job."
+say
+say You feel your heart sink. Should you try to justify your actions, or just apologise?
+
+setverb tell_humanoid_figure apologise
+has humanoid_figure knows
+
+setverb tell_humanoid_figure justify
+has humanoid_figure knows
+
+verb tell_humanoid_figure apologise
+untag humanoid_figure knows
+tag humanoid_figure integrity
+say "No apology is required, or expected. Causality Couriers has received payment for this delivery, and the terms of the contract have been fulfilled. As per clause 8.7A, couriers can exercise their discretion over the effects of a package on the timestream, provided a delivery is ultimately made."
+say
+say While you're mostly relieved to hear this, you make a mental note never to send a package of your own with Causality Couriers.
+
+verb tell_humanoid_figure justify
+untag humanoid_figure knows
+tag humanoid_figure integrity
+say "No justification is required, or expected. Causality Couriers has received payment for this delivery, and the terms of the contract have been fulfilled. As per clause 8.7A, couriers can exercise their discretion over the effects of a package on the timestream, provided a delivery is actually made."
+say
+say While you're mostly relieved to hear this, you make a mental note never to send a package of your own with Causality Couriers.
+
+setverb tell_humanoid_figure integrity
+has humanoid_figure integrity
+
+verb tell_humanoid_figure integrity
+untag humanoid_figure integrity
+tag humanoid_figure onyourown
+say "Causality Couriers has no official position on the integrity of the timeline. Individual couriers are expected to use their own judgement. Management will only intervene in a delivery should there be reasonable cause to suggest that said delivery may prevent the founding of Causality Couriers, or the receipt of funds due to Causality Couriers." 
+
+verb end_conversation humanoid_figure
+has $this onyourown
+say
+say "Your payment will be processed in two to three business days. Goodbye." 
+say
+say The light being disappears, leaving you to contemplate the awesome responsibility of your delivery job.
+say
+die THE END
 
 # General procedures
 proc has_any_parcel # succeeds if any item with the parcel tag is carried
