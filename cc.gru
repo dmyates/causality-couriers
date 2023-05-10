@@ -117,7 +117,7 @@ say It doesn't look like there's anything else for miles around. Besides, if you
 
 thing barricade
 name barricade
-desc It looks like it's been here for a long time, slowly, almost organically growing. There's at least half a junkyard's worth of discarded machinary and twisted metal, mixed with half a quarry's worth of stone slabs.
+desc It looks like it's been here for a long time, slowly, almost organically growing. There's at least half a junkyard's worth of discarded machinery and twisted metal, mixed with half a quarry's worth of stone slabs.
 loc before_barricade
 tags immovable impenetrable
 
@@ -257,7 +257,7 @@ js show_illustration('barricadeopen')
 continue
 
 thing walls
-desc The wood surface of the wall is barely visible beneath the hundres of photographs, newspaper clippings, printed emails and memoranda covering it. Many are complete with captions scrawled in red ink, and all are connected with different coloured strings. All the standard conspiracy theories are covered – you can see stuff about the moon landing, JFK, flat earth, hollow earth, chemtrails, ancient aliens, lizard people, Freemasons, the Knights Templar, the Bilderburg Group, Nessie and Bigfoot. There's a bold circle around a photograph of the Great Pyramid of Giza.
+desc The wood surface of the wall is barely visible beneath the hundreds of photographs, newspaper clippings, printed emails and memoranda covering it. Many are complete with captions scrawled in red ink, and all are connected with different coloured strings. All the standard conspiracy theories are covered – you can see stuff about the moon landing, JFK, flat earth, hollow earth, chemtrails, ancient aliens, lizard people, Freemasons, the Knights Templar, the Bilderburg Group, Nessie and Bigfoot. There's a bold circle around a photograph of the Great Pyramid of Giza.
 loc wooden_shed
 
 verb examine walls
@@ -300,7 +300,7 @@ setverb ask_fletcher year
 
 verb ask_fletcher year
 tag fletcher asked_about_year
-say "What year is it?" Fletcher raises an eyebrow. "It's thirty years' too late, that's what year it is. Hell, these days I'm given to thinkin' it's a few millenia too late."
+say "What year is it?" Fletcher raises an eyebrow. "It's thirty years' too late, that's what year it is. Hell, these days I'm given to thinkin' it's a few millennia too late."
 say
 say Your facial expression must have betrayed a dissatisfaction with this answer, so Fletcher continues, "I was told you wouldn't ask too many questions. Just do this job for me, and it won't matter what year this is anymore."
 
@@ -388,7 +388,7 @@ setverb close tall_parcel
 has $this open
 
 verb close tall_parcel
-carried wine_bottle: There's no point in closing it if it's empty. Make sure you're carrying something to put inside &ndash; preferably the original contents.
+carried wine_bottle: There's no point in closing it if it's empty. Make sure you're carrying something to put inside – preferably the original contents.
 run close_parcel
 
 proc close_parcel
@@ -807,7 +807,7 @@ at egypt
 here alien_remains
 has alien_remains reinforced
 here alien_swarm
-say You're not going to wait around to see what these aliens want. You look around and spy a gap between two portals that have just materialised. As long as you can get far enough away, your Casuality Courier homeward teleportation will kick in, and you'll be able to put a few millenia between yourself and the Ythrgzlyrs.
+say You're not going to wait around to see what these aliens want. You look around and spy a gap between two portals that have just materialised. As long as you can get far enough away, your Causality Courier homeward teleportation will kick in, and you'll be able to put a few millennia between yourself and the Ythrgzlyrs.
 say
 say Head down, you sprint for the gap. Surprised yelps crackle from the speakers of the Ythrgzlyrs' translation devices, but most are still busy climbing out of their portals. Before long, you feel a familiar tingling sensation and the world starts to spin.
 say
@@ -885,7 +885,7 @@ rule
 here television
 has television emergency
 eq $emergency_counter 3
-write apartment.additional The state-mandated wanted poster of Public Enemy &#x23;1 hangs on the wall opposite your front door.
+write apartment.additional The state-mandated wanted poster of Public Enemy &amp;num;1 hangs on the wall opposite your front door.
 bring wanted_poster
 
 rule
@@ -914,15 +914,15 @@ run arrest
 
 thing emergency_broadcast
 prop 0 "We interrupt your regularly scheduled programming to bring you an emergency broadcast," says the human anchor on the television. Strangely, he sounds positively giddy with excitement.
-prop 1 "This is a momentous day for the human race," continues Fthryzzk, the alien anchor, speaking through a tinny translator. "A project millenia in the making is at last coming to fruition. Ryan, why don't you do the honours?"<br><br>You've never changed things this much before...
-prop 2 "Thank you Fthryzzk," says the human anchor, Ryan. "We are just now recieving reports of an impending arrest. The arrest of Public Enemy Number One."<br><br>You know who Public Enemy Number One is. The memory has just come into your head, but it's always been there. It helps that Earth's Ythrgzlyr overlords require every human subject to keep a poster depicting Public Enemy Number One in their homes.<br><br>You hadn't noticed yours before, but at the same time, it's always been there.
+prop 1 "This is a momentous day for the human race," continues Fthryzzk, the alien anchor, speaking through a tinny translator. "A project millennia in the making is at last coming to fruition. Ryan, why don't you do the honours?"<br><br>You've never changed things this much before...
+prop 2 "Thank you Fthryzzk," says the human anchor, Ryan. "We are just now receiving reports of an impending arrest. The arrest of Public Enemy Number One."<br><br>You know who Public Enemy Number One is. The memory has just come into your head, but it's always been there. It helps that Earth's Ythrgzlyr overlords require every human subject to keep a poster depicting Public Enemy Number One in their homes.<br><br>You hadn't noticed yours before, but at the same time, it's always been there.
 prop 3 "We're cutting to a live feed now," says Fthryzzk. The anchors disappear and are replaced with a grainy view of your apartment's front door. Human and alien police officers crowd around it.
 prop 4 The sounds on the television match the sounds you can hear from behind your door. A gruff voice shouts, "Open up, we've got you surrounded!" Perhaps you have no choice.
 prop 5 After a minute of waiting, a couple of officers step up to your front door. "Looks like they're going to have to bust it open, Fthryzzk," says the disembodied voice of Ryan the human news anchor.
 prop 6 On the television screen, you see the police officer take a step back and then ram his shoulder into your front door. Your attention is instantly diverted as, at the same time, your front door bursts open and five or six police officers burst into your living room, all pointing guns at you.
 
 thing wanted_poster wanted poster
-name poster of Public Enemy &#x23;1
+name poster of Public Enemy &amp;num;1
 desc It's a poster of you. You're dressed in your grey Causality Courier uniform, splotched with bright green alien blood. There's a murderous expression on your face. The reward below your face is not an amount in any currency, but the single word FREEDOM.
 
 proc arrest
