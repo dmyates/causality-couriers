@@ -5796,7 +5796,7 @@ function show_illustration(illustration) {
 game Causality Couriers # Game title
 id CCLD53 # game ID (used to identify cookies; should be unique on your site)
 author David Yates
-version 1.0.1
+version 1.0.2
 person 2 # 2nd person, i.e. "You are in..."
 examine on # if 'on', the verb 'examine' will be implemented by clicking nouns
 conversation on
@@ -5839,7 +5839,7 @@ localise you_can_also_see What's here:
 # Introductory text
 say You're standing in front of barricade built of stone and rusted steel, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
 say
-say Rusty corrugated iron sheets and the twisted remains of cars and lawnmowers, fill in the gaps between large stone slabs above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
+say Rusty corrugated iron sheets and the twisted remains of cars and lawnmowers fill in the gaps between large stone slabs above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
 say 
 say You double-check your collection tag. Yep, this must be the place. But how to get in?
 say
@@ -5936,6 +5936,7 @@ tags alive hostile
 verbs wave_at
 
 verb examine drone
+!has $this examined
 run x_drone
 
 proc x_drone
@@ -6861,7 +6862,7 @@ has humanoid_figure integrity
 verb tell_humanoid_figure integrity
 untag humanoid_figure integrity
 tag humanoid_figure onyourown
-say "Causality Couriers has no official position on the integrity of the timeline. Individual couriers are expected to use their own judgement. Management will only intervene in a delivery should there be reasonable cause to suggest that said delivery may prevent the founding of Causality Couriers, or the receipt of funds due to Causality Couriers." 
+say "Causality Couriers has no official position on the integrity of the timeline. Individual couriers are expected to use their own judgement. Management will only intervene in a delivery should there be reasonable cause to believe that said delivery may prevent the founding of Causality Couriers, or the receipt of funds due to Causality Couriers." 
 
 verb end_conversation humanoid_figure
 has $this onyourown
