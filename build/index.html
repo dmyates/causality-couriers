@@ -4250,12 +4250,13 @@ function cancel_restart() {
 }
 
 function restart_game() {
+	// cc: mucking with interface
+	$('#room_description_container').slideDown();
+	$('#inventory_container').slideDown();
+	$('#holding_container').slideDown();
+
 	$('#save_prompt').slideUp();
 	$('#room_description').slideDown();
-
-	$('#inventory_container').slideDown();
-	$('#room_description_container').slideDown();
-	$('#holding_container').slideDown();
 
 	GAME_OVER = false;
 	Game = JSONfn.parse(INITIAL_GAME);
@@ -4822,6 +4823,13 @@ function undo() {
 		return;
 	}
 	
+	if (GAME_OVER) {
+		// cc: mucking with interface
+		$('#room_description_container').slideDown();
+		$('#inventory_container').slideDown();
+		$('#holding_container').slideDown();
+	}
+	
 	GAME_OVER = false;
 	
 	Game = JSONfn.parse(popped_state);
@@ -4905,6 +4913,13 @@ function load_game(game_name, suppress_message) {
 		dim_old_messages();
 		say('');
 		say('<span class="prompt"> restore</span>');
+	}
+	
+	if (GAME_OVER) {
+		// cc: mucking with interface
+		$('#room_description_container').slideDown();
+		$('#inventory_container').slideDown();
+		$('#holding_container').slideDown();
 	}
 
 	GAME_OVER = false;
@@ -5796,7 +5811,7 @@ function show_illustration(illustration) {
 game Causality Couriers # Game title
 id CCLD53 # game ID (used to identify cookies; should be unique on your site)
 author David Yates
-version 1.0.2
+version 1.0.3
 person 2 # 2nd person, i.e. "You are in..."
 examine on # if 'on', the verb 'examine' will be implemented by clicking nouns
 conversation on

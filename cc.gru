@@ -3,7 +3,7 @@
 game Causality Couriers # Game title
 id CCLD53 # game ID (used to identify cookies; should be unique on your site)
 author David Yates
-version 1.0.2
+version 1.0.3
 person 2 # 2nd person, i.e. "You are in..."
 examine on # if 'on', the verb 'examine' will be implemented by clicking nouns
 conversation on
