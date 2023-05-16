@@ -44,7 +44,7 @@ localise intro_by by
 localise you_see_nothing_special_about_that {The $this} is just an ordinary, everyday {$this}. It looks, sounds and smells exactly as you would expect it to.
 localise you_can_also_see What's here:
 # Introductory text
-say You're standing in front of barricade built of stone and rusted steel, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
+say You're standing in front of a barricade built of stone and rusted steel, a twisted plastic collection tag in your hands. The dizzy nausea you get after teleporting has yet to subside. It's always worse when there's a time shift involved.
 say
 say Rusty corrugated iron sheets and the twisted remains of cars and lawnmowers fill in the gaps between large stone slabs above you, occasionally creaking ominously. A brown, blasted landscape stretches around you as far as the eye can see.
 say 
