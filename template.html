@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Casuality Couriers</title>
+		<title>Causality Couriers</title>
 		<style type="text/css">
 			
 /* "exportable" CSS, i.e., whatever should be included in the downloaded games */
@@ -129,13 +129,27 @@ div#top_bar {
 	color: #000033;
 	padding: 8px;
 }
-div#topbar_left {
-	padding: 0px;
-	display: inline-block;
+
+@media (max-width: 400px){
+	div#topbar_left,
+	div#topbar_right {
+		display: block;
+		text-align: left;
+	}
+
 }
-div#topbar_right {
-	float: right;
-	text-align: right;
+
+@media (min-width: 401px){
+	div#top_bar {
+	}
+	div#topbar_left {
+		padding: 0px;
+		display: inline-block;
+	}
+	div#topbar_right {
+		float: right;
+		text-align: right;
+	}
 }
 div#scroller {
 	height: 50%;
@@ -144,6 +158,7 @@ div#scroller {
 	color: #ffffff;
 	/* border: 1px solid #000044; */
 	padding: 5% 5% 2px 5%;
+	min-width: 13rem;
 }
 div#scroller button {
 	background-color: #000000;
@@ -297,7 +312,7 @@ div#inventory_container {
 }
 div#inventory {
 	overflow: stretch;
-	height: auto;
+	/* height: auto; */
 	/* margin-left: 15%; */
 	/* min-height: 10%; */
 	/* border: 1px solid #000044; */
@@ -5382,9 +5397,9 @@ function animate_room_description_height() {
 }
 
 function set_heights() { // no animation
-	$('#room_description_container').height($('#room_description').outerHeight());
-	$('#holding_container').height($('#holding').outerHeight());
-	$('#inventory_container').height($('#inventory').outerHeight());
+	//$('#room_description_container').height($('#room_description').outerHeight());
+	//$('#holding_container').height($('#holding').outerHeight());
+	//$('#inventory_container').height($('#inventory').outerHeight());
 }
 
 /*
@@ -5698,7 +5713,7 @@ function show_illustration(illustration) {
 <div class="conversation_options">Ask about: <button type="button" onclick="do_verb('ask_fletcher','drone')">circular shadow</button><button type="button" onclick="do_verb('ask_fletcher','barricade')">barricade</button><button type="button" onclick="do_verb('ask_fletcher','parcel')">parcel</button></div>
 <div class="end_conversation"><button type="button" onclick="do_verb('end_conversation', 'fletcher')">end conversation</button></div></div></div>
 
-			<div id="room_description_container" style="height: 130px;">
+			<div id="room_description_container">
 				<div id="room_description" style=""><div class="im_in">You're standing in front of an enormous barricade made of junk. There is no obvious entrance.</div>
 <div class="exits">Exits: <button type="button" class="direction" onclick="go('desert')">desert</button></div>
 <div class="can_see">What's here:
@@ -5707,13 +5722,13 @@ function show_illustration(illustration) {
 </div>
 			</div>
 
-			<div id="holding_container" style="height: 65px;">
+			<div id="holding_container">
 				<div id="holding">You're holding:
 <ul><li><button type="button" class="examine" onclick="do_verb('examine','collection_tag')">collection tag</button> <button type="button" onclick="do_verb('twist','collection_tag')">twist</button> <button type="button" onclick="do_verb('drop','collection_tag')">drop</button></li></ul></div>
 			</div>
 
 			<div id="savefix">
-				<div id="inventory_container" style="height: 32px;">
+				<div id="inventory_container">
 					<div id="inventory">You're carrying:
 <button type="button" onclick="hold('sword')">Courier's Blade</button> <button type="button" onclick="hold('collection_tag')" disabled="disabled">collection tag</button></div>
 				</div>
