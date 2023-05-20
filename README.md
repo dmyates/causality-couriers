@@ -16,6 +16,7 @@ Then play the game on your browser at http://localhost:8000.
 
 * [Play on davidyat.es](https://davidyat.es/cc/)
 * [Play on itch.io](https://david-yates.itch.io/causality-couriers)
+* [Postmortem](https://davidyat.es/2023/05/20/postmortem-ludum-dare-53/)
 * [Walkthrough](https://davidyat.es/2023/05/16/walkthrough-causality-couriers/)
 
 ## Changelog
